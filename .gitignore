@@ -1,0 +1,11 @@
+.vscode
+.idea
+
+dist
+node_modules
+tsconfig.tsbuildinfo
+
+
+/package-lock.json
+
+.rollup.cache
