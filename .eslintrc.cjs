@@ -1,3 +1,5 @@
+// const eslintConfigPrettier= require("eslint-config-prettier");
+
 module.exports = {
   env: {
     browser: true,
@@ -27,4 +29,4 @@ module.exports = {
   },
   plugins: ["@typescript-eslint", "react"],
   rules: {},
-};
+}
