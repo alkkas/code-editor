@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import { KeyEvents } from './keyEvents/keyEvents'
 import './index.css'
 interface EditorProps {
@@ -9,7 +9,7 @@ interface EditorProps {
 
 export default function Editor(props: EditorProps) {
   const wrapper = useRef<HTMLDivElement>(null)
-
+  const [count, setCount] = useState(1)
   useLayoutEffect(() => {
     if (!wrapper.current) throw new Error('wrapper component is null')
 
@@ -20,10 +20,11 @@ export default function Editor(props: EditorProps) {
   return (
     <div
       style={{ width: props.width, height: props.height, background: 'red' }}
-      className={`text-3xl`}
+      className={`text-2xl`}
       ref={wrapper}
+      onClick={() => setCount((prev) => prev + 1)}
     >
-      asdfasdf
+      {count}
     </div>
   )
 }
