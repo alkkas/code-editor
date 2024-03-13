@@ -27,6 +27,10 @@ module.exports = {
     ecmaVersion: "latest",
     sourceType: "module",
   },
-  plugins: ["@typescript-eslint", "react"],
-  rules: {},
+  plugins: ["@typescript-eslint", "react", "fsd-import"],
+  rules: {
+    "fsd-import/fsd-relative-path": "error",
+    "fsd-import/public-api-imports": "error",
+    "fsd-import/layer-imports": ["error", { alias: "@" }],
+  },
 }

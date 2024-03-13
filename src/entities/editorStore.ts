@@ -18,7 +18,7 @@ export const useEditorStore = create(
       {
         currentCarriagePos: { line: 0, lineIndex: 0 },
         isFocused: false,
-        lines: [],
+        lines: [[{ value: 'a' }, { value: 'b' }]],
       } as IEditorStore,
       (set) => ({
         setFocus: (value: boolean) => set((state) => (state.isFocused = value)),

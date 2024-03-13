@@ -1,5 +1,4 @@
 /** @type {import('tailwindcss').Config} */
-const { createThemes } = require('tw-colors')
 export default {
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
   theme: {
@@ -10,17 +9,13 @@ export default {
           '50%': { opacity: 0 },
         },
       },
+      colors: {
+        primary: 'var(--primary)',
+        secondary: 'var(--secondary)',
+      },
       animation: {
-        blink: 'blink .2s ease-in-out infinite',
+        blink: 'blink .6s ease-in-out infinite',
       },
     },
   },
-  plugins: [
-    createThemes({
-      default: {
-        primary: 'black',
-        secondary: 'white',
-      },
-    }),
-  ],
 }

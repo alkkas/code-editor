@@ -18,7 +18,10 @@
     "noFallthroughCasesInSwitch": true, // Report errors for fallthrough cases in switch statement
     "declarationDir": "dist",
     // Specify the output directory for generated declaration files
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "paths": {
+      "@/*": ["./src/*"],
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]
