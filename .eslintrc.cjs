@@ -32,5 +32,6 @@ module.exports = {
     "fsd-import/fsd-relative-path": "error",
     "fsd-import/public-api-imports": "error",
     "fsd-import/layer-imports": ["error", { alias: "@" }],
+    "@typescript-eslint/no-unused-vars": "warn",
   },
 }

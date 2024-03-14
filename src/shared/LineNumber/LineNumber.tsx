@@ -2,5 +2,5 @@ interface LineNumber {
   count: number
 }
 export default function LineNumber(props: LineNumber) {
-  return <div>{props.count}</div>
+  return <div className="p-1 bg-amber-400">{props.count}</div>
 }
