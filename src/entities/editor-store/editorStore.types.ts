@@ -18,9 +18,16 @@ export interface IEditorStore {
   addNewSymbol: (newSymbol: ISymbol, position?: IPosition) => void
   deleteSymbol: () => void
   moveCarriage: (direction: 'up' | 'down' | 'left' | 'right') => void
+  changeCurrentLine: (line: ISymbol[]) => void
+  createNewLine: () => void
 
   //getters
   getCurrentLine: () => ISymbol[]
   getCurrentIndexInLine: () => number
-  getCurretLineIndex: () => number
+  getCurrentLineIndex: () => number
+  getCurrent: () => {
+    line: ISymbol[]
+    index: number
+    indexInLine: number
+  }
 }

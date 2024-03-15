@@ -21,15 +21,14 @@ export default function Editor(props: EditorProps) {
     return keyEvents.deleteAllListeners.bind(keyEvents)
   }, [])
 
-  const isCarriageAfterThisSymbol = (line_idx: number, symbol_idx: number) => {
+  const isCarriageAroundThisSymbol = (line_idx: number, symbol_idx: number) => {
+    console.log(editorStore.currentCarriagePos.indexInLine, symbol_idx)
     return (
       editorStore.isFocused &&
-      line_idx === editorStore.currentCarriagePos.line &&
-      symbol_idx === editorStore.currentCarriagePos.indexInLine - 1
+      line_idx === editorStore.getCurrentLineIndex() &&
+      symbol_idx === editorStore.getCurrentIndexInLine() - 1
     )
   }
-
-  console.log(editorStore.lines)
 
   return (
     <div
@@ -42,15 +41,16 @@ export default function Editor(props: EditorProps) {
       {editorStore.lines.map((line, line_idx) => (
         <div key={line_idx} className="flex items-center">
           <LineNumber count={line_idx + 1} />
-
-          {line.map((symbol, symbol_idx) => (
-            <>
-              <div key={symbol_idx}>{symbol.value}</div>
-              {isCarriageAfterThisSymbol(line_idx, symbol_idx) && (
-                <Carriage fontSize={fontSize} />
-              )}
-            </>
-          ))}
+          <>
+            {line.map((symbol, symbol_idx) => (
+              <>
+                {isCarriageAroundThisSymbol(line_idx, symbol_idx) && (
+                  <Carriage fontSize={fontSize} />
+                )}
+                <div key={symbol_idx}>{symbol.value}</div>
+              </>
+            ))}
+          </>
         </div>
       ))}
     </div>

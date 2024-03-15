@@ -30,6 +30,8 @@ export class KeyEvents {
       editorStore.moveCarriage('up')
     } else if (evt.key === 'ArrowDown') {
       editorStore.moveCarriage('down')
+    } else if (evt.key === 'Enter') {
+      editorStore.createNewLine()
     }
   }
 

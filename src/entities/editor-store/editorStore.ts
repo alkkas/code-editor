@@ -1,6 +1,9 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
-import { IEditorStore } from '@/entities/editor-store/editorStore.types'
+import {
+  IEditorStore,
+  ISymbol,
+} from '@/entities/editor-store/editorStore.types'
 
 export const useEditorStore = create(
   immer<IEditorStore>((set, get) => ({
@@ -14,56 +17,88 @@ export const useEditorStore = create(
         state.isFocused = value
       }),
 
-    addNewSymbol: (newSymbol, position) => {
+    changeCurrentLine(line) {
       set((state) => {
-        const currentLine =
-          state.lines[position?.line ?? state.currentCarriagePos.line]
-        const index =
-          position?.indexInLine ?? state.currentCarriagePos.indexInLine
+        state.lines[state.getCurrentLineIndex()] = line
+      })
+    },
 
-        state.lines[state.currentCarriagePos.line] = [
-          ...currentLine.slice(0, index),
-          newSymbol,
-          ...currentLine.slice(index),
-        ]
+    addNewSymbol(newSymbol) {
+      const { indexInLine, line } = get().getCurrent()
 
+      get().changeCurrentLine([
+        ...line.slice(0, indexInLine),
+        newSymbol,
+        ...line.slice(indexInLine),
+      ])
+
+      set((state) => {
         state.currentCarriagePos.indexInLine++
       })
     },
 
-    deleteSymbol: () => {
-      set((state) => {
-        const currentLine = state.getCurrentLine()
-        const index = state.getCurrentIndexInLine()
+    deleteSymbol() {
+      const { indexInLine, line } = get().getCurrent()
 
-        state.lines[state.getCurretLineIndex()] = [
-          ...currentLine.slice(0, index - 1),
-          ...currentLine.slice(index),
-        ]
+      get().changeCurrentLine([
+        ...line.slice(0, indexInLine - 1),
+        ...line.slice(indexInLine),
+      ])
+
+      set((state) => {
         state.currentCarriagePos.indexInLine--
+      })
+    },
+
+    createNewLine() {
+      set((state) => {
+        const { index, indexInLine, line } = state.getCurrent()
+
+        const oldLine = line.slice(0, indexInLine)
+        const newLine = line.slice(indexInLine)
+
+        state.lines = [
+          ...state.lines.slice(0, index),
+          oldLine,
+          newLine,
+          ...state.lines.slice(index + 1),
+        ]
+
+        state.currentCarriagePos.line++
+        state.currentCarriagePos.indexInLine = 0
       })
     },
 
     moveCarriage: (direction) => {
       set((state) => {
+        const moveCarriageToClosestSymbol = (line: ISymbol[]) => {
+          if (line.length < state.currentCarriagePos.indexInLine) {
+            state.currentCarriagePos.indexInLine = line.length
+          }
+        }
+
+        const { index, indexInLine, line } = state.getCurrent()
+
         switch (direction) {
           case 'down':
-            if (state.lines[state.getCurretLineIndex() + 1]) {
+            if (state.lines[index + 1]) {
               state.currentCarriagePos.line++
+              moveCarriageToClosestSymbol(state.lines[index + 1])
             }
             break
           case 'up':
-            if (state.lines[state.getCurretLineIndex() + 1]) {
+            if (state.lines[index - 1]) {
               state.currentCarriagePos.line--
+              moveCarriageToClosestSymbol(state.lines[index - 1])
             }
             break
           case 'left':
-            if (state.getCurrentLine()[state.getCurrentIndexInLine() - 1]) {
+            if (line[indexInLine - 1]) {
               state.currentCarriagePos.indexInLine--
             }
             break
           case 'right':
-            if (state.getCurrentLine()[state.getCurrentIndexInLine() + 1]) {
+            if (line[indexInLine]) {
               state.currentCarriagePos.indexInLine++
             }
             break
@@ -76,6 +111,11 @@ export const useEditorStore = create(
     // getters
     getCurrentLine: () => get().lines[get().currentCarriagePos.line],
     getCurrentIndexInLine: () => get().currentCarriagePos.indexInLine,
-    getCurretLineIndex: () => get().currentCarriagePos.line,
+    getCurrentLineIndex: () => get().currentCarriagePos.line,
+    getCurrent: () => ({
+      line: get().getCurrentLine(),
+      index: get().getCurrentLineIndex(),
+      indexInLine: get().getCurrentIndexInLine(),
+    }),
   }))
 )
