@@ -50,9 +50,20 @@ export const useEditorStore = create(
     },
 
     deleteSymbol() {
-      const { indexInLine, line } = get().getCurrent()
+      const { indexInLine, line, index } = get().getCurrent()
 
-      if (indexInLine === 0) return
+      if (indexInLine === 0) {
+        if (index === 0) return
+
+        // set((state) => {
+        //   state.lines = [
+        //     ...state.lines.slice(0, index),
+        //     ...state.lines.slice(index + 1),
+        //   ]
+        // })
+
+        return
+      }
 
       get().changeCurrentLine([
         ...line.slice(0, indexInLine - 1),
