@@ -20,6 +20,7 @@ export interface IEditorStore {
   moveCarriage: (direction: 'up' | 'down' | 'left' | 'right') => void
   changeCurrentLine: (line: ISymbol[]) => void
   createNewLine: () => void
+  setCarriagePos: (pos: Partial<IPosition>) => void
 
   //getters
   getCurrentLine: () => ISymbol[]

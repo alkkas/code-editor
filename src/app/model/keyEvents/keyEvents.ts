@@ -16,8 +16,6 @@ export class KeyEvents {
   }
 
   private onKeyDown(evt: KeyboardEvent) {
-    console.log(evt)
-
     if (evt.key.length === 1) {
       editorStore.addNewSymbol({ value: evt.key })
     } else if (evt.key === 'Backspace') {

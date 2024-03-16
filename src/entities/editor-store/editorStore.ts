@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import {
   IEditorStore,
+  IPosition,
   ISymbol,
 } from '@/entities/editor-store/editorStore.types'
 
@@ -16,6 +17,17 @@ export const useEditorStore = create(
       set((state) => {
         state.isFocused = value
       }),
+
+    setCarriagePos(pos) {
+      set((state) => {
+        if (pos.line) {
+          state.currentCarriagePos.line = pos.line
+        }
+        if (pos.indexInLine) {
+          state.currentCarriagePos.indexInLine = pos.indexInLine
+        }
+      })
+    },
 
     changeCurrentLine(line) {
       set((state) => {
@@ -39,6 +51,8 @@ export const useEditorStore = create(
 
     deleteSymbol() {
       const { indexInLine, line } = get().getCurrent()
+
+      if (indexInLine === 0) return
 
       get().changeCurrentLine([
         ...line.slice(0, indexInLine - 1),
