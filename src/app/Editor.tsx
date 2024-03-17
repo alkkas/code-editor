@@ -28,7 +28,7 @@ export default function Editor(props: EditorProps) {
     initialCoords.x = line.offsetLeft
 
     const symbols = document.querySelectorAll(
-      `span[data-symbol-index]`
+      `div[data-line-index="${index}"] span[data-symbol-index]`
     ) as NodeListOf<HTMLSpanElement> | null
 
     if (indexInLine === 0) {
@@ -38,7 +38,6 @@ export default function Editor(props: EditorProps) {
       throw Error(`No symbols found in line: ${index}`)
     } else if (indexInLine === symbols?.length) {
       const lastSymbol = symbols.item(symbols.length - 1)
-
       initialCoords.x = lastSymbol.offsetLeft + lastSymbol.offsetWidth
     } else {
       const symbol = symbols?.item(indexInLine)

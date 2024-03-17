@@ -55,12 +55,12 @@ export const useEditorStore = create(
       if (indexInLine === 0) {
         if (index === 0) return
 
-        // set((state) => {
-        //   state.lines = [
-        //     ...state.lines.slice(0, index),
-        //     ...state.lines.slice(index + 1),
-        //   ]
-        // })
+        set((state) => {
+          state.lines = [
+            ...state.lines.slice(0, index),
+            ...state.lines.slice(index + 1),
+          ]
+        })
 
         return
       }

@@ -29,6 +29,7 @@ module.exports = {
   },
   plugins: ["@typescript-eslint", "react", "fsd-import"],
   rules: {
+    "no-console": "warn",
     "fsd-import/fsd-relative-path": "error",
     "fsd-import/public-api-imports": "error",
     "fsd-import/layer-imports": ["error", { alias: "@" }],
