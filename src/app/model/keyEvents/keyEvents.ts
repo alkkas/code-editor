@@ -17,6 +17,12 @@ export class KeyEvents {
 
   private onKeyDown(evt: KeyboardEvent) {
     if (evt.key.length === 1) {
+      if (evt.ctrlKey) {
+        if (evt.code === 'KeyC') {
+          console.log('copy')
+        }
+        return
+      }
       editorStore.addNewSymbol({ value: evt.key })
     } else if (evt.key === 'Backspace') {
       editorStore.deleteSymbol()

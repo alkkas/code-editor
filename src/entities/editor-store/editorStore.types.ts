@@ -31,4 +31,5 @@ export interface IEditorStore {
     index: number
     indexInLine: number
   }
+  getText: () => string
 }

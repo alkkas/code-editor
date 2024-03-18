@@ -2,7 +2,6 @@ import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import {
   IEditorStore,
-  IPosition,
   ISymbol,
 } from '@/entities/editor-store/editorStore.types'
 
@@ -20,10 +19,10 @@ export const useEditorStore = create(
 
     setCarriagePos(pos) {
       set((state) => {
-        if (pos.line) {
+        if (pos.line !== undefined) {
           state.currentCarriagePos.line = pos.line
         }
-        if (pos.indexInLine) {
+        if (pos.indexInLine !== undefined) {
           state.currentCarriagePos.indexInLine = pos.indexInLine
         }
       })
@@ -60,6 +59,12 @@ export const useEditorStore = create(
             ...state.lines.slice(0, index),
             ...state.lines.slice(index + 1),
           ]
+
+          state.lines[index - 1] = [...state.lines[index - 1], ...line]
+
+          state.currentCarriagePos.indexInLine =
+            state.lines[index - 1].length - line.length
+          state.currentCarriagePos.line = index - 1
         })
 
         return
@@ -142,5 +147,13 @@ export const useEditorStore = create(
       index: get().getCurrentLineIndex(),
       indexInLine: get().getCurrentIndexInLine(),
     }),
+
+    getText: () => {
+      const codeText = ''
+
+      get().lines.forEach((line) => {})
+
+      return codeText
+    },
   }))
 )

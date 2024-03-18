@@ -1,10 +1,11 @@
 import { MouseEvent, useLayoutEffect, useRef, useState } from 'react'
-import { KeyEvents } from './model/keyEvents/keyEvents'
-import { EditorProps } from './model/editor-types'
+import { KeyEvents } from '../model/keyEvents/keyEvents'
+import { EditorProps } from '../model/editor-types'
 import { Carriage } from '@/shared/Carriage/Carriage'
 import { useEditorStore } from '@/entities/editor-store/editorStore'
 import LineNumber from '@/shared/LineNumber/LineNumber'
-import './index.css'
+import '../index.css'
+import Line from '@/app/ui/Line'
 
 export default function Editor(props: EditorProps) {
   const wrapper = useRef<HTMLDivElement>(null)
@@ -24,7 +25,7 @@ export default function Editor(props: EditorProps) {
     if (!line) throw Error('Line not found')
 
     //TODO: change this
-    initialCoords.y = (line.offsetTop ?? 0) + 8
+    initialCoords.y = (line.offsetTop ?? 0) + 9
     initialCoords.x = line.offsetLeft
 
     const symbols = document.querySelectorAll(
@@ -54,20 +55,6 @@ export default function Editor(props: EditorProps) {
     editorStore.getCurrentIndexInLine(),
   ])
 
-  const clickOnEditor = (evt: MouseEvent<HTMLDivElement>) => {
-    const target = evt.target as HTMLElement
-
-    const line = target.closest(`div[data-line-index]`)
-    let lineIndex = Number(line?.getAttribute('data-line-index'))
-    lineIndex = isNaN(lineIndex) ? 0 : lineIndex
-
-    const symbol = target.closest(`span[data-symbol-index]`)
-    let indexInLine = Number(symbol?.getAttribute('data-symbol-index'))
-    indexInLine = isNaN(indexInLine) ? 0 : indexInLine
-
-    editorStore.setCarriagePos({ line: lineIndex, indexInLine })
-  }
-
   useLayoutEffect(() => {
     if (!wrapper.current) throw new Error('wrapper component is null')
 
@@ -77,15 +64,34 @@ export default function Editor(props: EditorProps) {
 
     return keyEvents.deleteAllListeners.bind(keyEvents)
   }, [])
+
+  const clickOnEditor = (evt: MouseEvent<HTMLDivElement>) => {
+    editorStore.setFocus(false)
+    const target = evt.target as HTMLElement
+    const line = target.closest(`div[data-line-index]`)
+    let lineIndex = Number(line?.getAttribute('data-line-index'))
+
+    lineIndex = isNaN(lineIndex) ? editorStore.lines.length - 1 : lineIndex
+
+    const symbol = target.closest(`span[data-symbol-index]`)
+    let indexInLine = Number(symbol?.getAttribute('data-symbol-index'))
+    indexInLine = isNaN(indexInLine)
+      ? editorStore.lines[lineIndex].length
+      : indexInLine
+
+    editorStore.setCarriagePos({ line: lineIndex, indexInLine })
+    editorStore.setFocus(true)
+  }
+
   return (
     <div
       {...props}
       style={{ ...props.style, width: props.width, height: props.height }}
       ref={wrapper}
-      className="bg-secondary border-primary border cursor-text relative"
+      className="bg-secondary border-primary border cursor-text relative overflow-auto"
       tabIndex={0}
     >
-      <div className="relative overflow-scroll" onClick={clickOnEditor}>
+      <div className="relative" onClick={clickOnEditor}>
         {editorStore.isFocused && (
           <Carriage
             fontSize={fontSize}
@@ -93,18 +99,8 @@ export default function Editor(props: EditorProps) {
             top={carriageCoords.y}
           />
         )}
-
         {editorStore.lines.map((line, line_idx) => (
-          <div key={line_idx} className="flex items-stretch">
-            <LineNumber count={line_idx + 1} />
-            <div data-line-index={line_idx} className="flex items-center">
-              {line.map((symbol, symbol_idx) => (
-                <span key={symbol_idx} data-symbol-index={symbol_idx}>
-                  {symbol.value === ' ' ? <>&nbsp;</> : symbol.value}
-                </span>
-              ))}
-            </div>
-          </div>
+          <Line line={line} index={line_idx} key={line_idx} />
         ))}
       </div>
     </div>
