@@ -8,6 +8,20 @@ interface LineProps {
   index: number
 }
 
+const areLinesEqual = (line1: ISymbol[], line2: ISymbol[]) => {
+  if (line1.length !== line2.length) return false
+
+  for (let i = 0; i < line1.length; i++) {
+    if (
+      line1[i].value !== line2[i].value ||
+      line1[i].color !== line2[i].color
+    ) {
+      return false
+    }
+  }
+  return true
+}
+
 const Line = memo(
   function Line(props: LineProps) {
     return (
@@ -25,8 +39,13 @@ const Line = memo(
   },
   (prevProps, nextProps) => {
     const editorStore = useEditorStore.getState()
+
     if (prevProps.index !== nextProps.index) return false
-    return editorStore.currentCarriagePos.line !== nextProps.index
+
+    return (
+      editorStore.currentCarriagePos.line !== nextProps.index &&
+      areLinesEqual(prevProps.line, nextProps.line)
+    )
   }
 )
 export default Line
