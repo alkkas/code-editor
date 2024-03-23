@@ -31,5 +31,5 @@ export interface IEditorStore {
     index: number
     indexInLine: number
   }
-  getText: () => string
+  getText: (start?: IPosition, finish?: IPosition) => string
 }

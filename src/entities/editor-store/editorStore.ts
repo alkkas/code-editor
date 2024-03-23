@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import {
   IEditorStore,
+  IPosition,
   ISymbol,
 } from '@/entities/editor-store/editorStore.types'
 
@@ -148,10 +149,32 @@ export const useEditorStore = create(
       indexInLine: get().getCurrentIndexInLine(),
     }),
 
-    getText: () => {
-      const codeText = ''
+    getText: (
+      start = { line: 0, indexInLine: 0 },
+      finish = { line: get().lines.length - 1, indexInLine: -1 }
+    ) => {
+      let codeText = ''
 
-      get().lines.forEach((line) => {})
+      const initialLines = get().lines
+
+      const startLine = initialLines[start.line].slice(start.indexInLine)
+
+      const finishLine = initialLines[finish.line].slice(0, finish.indexInLine)
+
+      const lines = [
+        startLine,
+        ...initialLines.slice(start.line, finish.line + 1),
+        finishLine,
+      ]
+
+      lines.forEach((line, lineIndex) => {
+        line.forEach((symbol) => {
+          codeText += symbol.value
+        })
+        if (lineIndex !== lines.length - 1) {
+          codeText += '\n'
+        }
+      })
 
       return codeText
     },

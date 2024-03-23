@@ -3,9 +3,15 @@ import { KeyEvents } from '../model/keyEvents/keyEvents'
 import { EditorProps } from '../model/editor-types'
 import { Carriage } from '@/shared/Carriage/Carriage'
 import { useEditorStore } from '@/entities/editor-store/editorStore'
-import LineNumber from '@/shared/LineNumber/LineNumber'
+import Line from './Line'
 import '../index.css'
-import Line from '@/app/ui/Line'
+import {
+  getClosestLine,
+  getClosestSymbol,
+  lineElement,
+  symbolElement,
+} from '../lib/getElements.helpers'
+import { lineAttr, symbolAttr } from '@/shared/utils/lib/elements.const'
 
 export default function Editor(props: EditorProps) {
   const wrapper = useRef<HTMLDivElement>(null)
@@ -19,7 +25,7 @@ export default function Editor(props: EditorProps) {
     const initialCoords = { x: 0, y: 0 }
 
     const line = document.querySelector(
-      `div[data-line-index="${index}"]`
+      lineElement(index)
     ) as HTMLDivElement | null
 
     if (!line) throw Error('Line not found')
@@ -29,7 +35,7 @@ export default function Editor(props: EditorProps) {
     initialCoords.x = line.offsetLeft
 
     const symbols = document.querySelectorAll(
-      `div[data-line-index="${index}"] span[data-symbol-index]`
+      `${lineElement(index)} ${symbolElement()}`
     ) as NodeListOf<HTMLSpanElement> | null
 
     if (indexInLine === 0) {
@@ -68,13 +74,14 @@ export default function Editor(props: EditorProps) {
   const clickOnEditor = (evt: MouseEvent<HTMLDivElement>) => {
     editorStore.setFocus(false)
     const target = evt.target as HTMLElement
-    const line = target.closest(`div[data-line-index]`)
-    let lineIndex = Number(line?.getAttribute('data-line-index'))
+    const line = getClosestLine(target)
+    let lineIndex = Number(line?.getAttribute(lineAttr))
 
     lineIndex = isNaN(lineIndex) ? editorStore.lines.length - 1 : lineIndex
 
-    const symbol = target.closest(`span[data-symbol-index]`)
-    let indexInLine = Number(symbol?.getAttribute('data-symbol-index'))
+    const symbol = getClosestSymbol(target)
+
+    let indexInLine = Number(symbol?.getAttribute(symbolAttr))
     indexInLine = isNaN(indexInLine)
       ? editorStore.lines[lineIndex].length
       : indexInLine

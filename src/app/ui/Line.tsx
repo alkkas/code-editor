@@ -2,6 +2,7 @@ import LineNumber from '@/shared/LineNumber/LineNumber'
 import { ISymbol } from '@/entities/editor-store/editorStore.types'
 import { memo } from 'react'
 import { useEditorStore } from '@/entities/editor-store/editorStore'
+import { lineAttr, symbolAttr } from '@/shared/utils/lib/elements.const'
 
 interface LineProps {
   line: ISymbol[]
@@ -27,9 +28,12 @@ const Line = memo(
     return (
       <div key={props.index} className="flex items-stretch">
         <LineNumber count={props.index + 1} />
-        <div data-line-index={props.index} className="flex items-center w-full">
+        <div
+          {...{ [lineAttr]: props.index }}
+          className="flex items-center w-full"
+        >
           {props.line.map((symbol, symbol_idx) => (
-            <span key={symbol_idx} data-symbol-index={symbol_idx}>
+            <span key={symbol_idx} {...{ [symbolAttr]: symbol_idx }}>
               {symbol.value === ' ' ? <>&nbsp;</> : symbol.value}
             </span>
           ))}
