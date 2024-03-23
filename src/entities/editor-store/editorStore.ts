@@ -2,7 +2,6 @@ import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import {
   IEditorStore,
-  IPosition,
   ISymbol,
 } from '@/entities/editor-store/editorStore.types'
 
@@ -11,6 +10,7 @@ export const useEditorStore = create(
     currentCarriagePos: { line: 0, indexInLine: 0 },
     isFocused: false,
     lines: [[]],
+    selectionRange: { start: undefined, finish: undefined },
 
     // setters
     setFocus: (value) =>
@@ -149,11 +149,11 @@ export const useEditorStore = create(
       indexInLine: get().getCurrentIndexInLine(),
     }),
 
-    getText: (
-      start = { line: 0, indexInLine: 0 },
-      finish = { line: get().lines.length - 1, indexInLine: -1 }
-    ) => {
+    getText: () => {
       let codeText = ''
+      const { start, finish } = get().selectionRange
+
+      if (!start || !finish) throw Error('nothing to select')
 
       const initialLines = get().lines
 
@@ -177,6 +177,10 @@ export const useEditorStore = create(
       })
 
       return codeText
+    },
+
+    isSelectionActive: () => {
+      return !!(get().selectionRange.start && get().selectionRange.finish)
     },
   }))
 )

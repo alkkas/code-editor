@@ -4,3 +4,6 @@ export type DeepPartial<T> =
         [P in keyof T]?: DeepPartial<T[P]>
       }
     : T
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type TransformEventMap<T> = { [K in keyof T]: (evt: T[K]) => any }

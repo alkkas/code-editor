@@ -8,10 +8,16 @@ export interface IPosition {
   indexInLine: number
 }
 
+export interface ISelectionRange {
+  start: IPosition | undefined
+  finish: IPosition | undefined
+}
+
 export interface IEditorStore {
   currentCarriagePos: IPosition
   isFocused: boolean
   lines: ISymbol[][]
+  selectionRange: ISelectionRange
 
   //setters
   setFocus: (v: boolean) => void
@@ -32,4 +38,5 @@ export interface IEditorStore {
     indexInLine: number
   }
   getText: (start?: IPosition, finish?: IPosition) => string
+  isSelectionActive: () => boolean
 }

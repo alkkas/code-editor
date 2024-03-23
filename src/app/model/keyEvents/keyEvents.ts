@@ -2,11 +2,13 @@ import { getClosestLine, getClosestSymbol } from '../../lib/getElements.helpers'
 import { useEditorStore } from '@/entities/editor-store/editorStore'
 import { IPosition } from '@/entities/editor-store/editorStore.types'
 import { lineAttr, symbolAttr } from '@/shared/utils/lib/elements.const'
+import { TransformEventMap } from '@/shared/utils/types/types'
 
 const editorStore = useEditorStore.getState()
 
 export class KeyEvents {
   wrapper: HTMLDivElement
+
   constructor(wrapper: HTMLDivElement) {
     this.wrapper = wrapper
   }
@@ -25,7 +27,7 @@ export class KeyEvents {
     }
 
     const selection = window.getSelection()
-    console.log(selection)
+
     const startNode = selection?.anchorNode?.parentElement
     const finishNode = selection?.focusNode?.parentElement
 
@@ -34,7 +36,6 @@ export class KeyEvents {
       console.warn('start or finish nodes are not exist')
       return range
     }
-    console.log(getClosestLine(startNode), getClosestSymbol(startNode))
     const indexes = [
       getClosestLine(startNode)?.getAttribute(lineAttr),
       getClosestSymbol(startNode)?.getAttribute(symbolAttr),
@@ -52,11 +53,15 @@ export class KeyEvents {
       //@ts-expect-error INTENTIONAL
       range.finish.indexInLine = +indexes[3]
     }
-    console.log(range)
     const text = editorStore.getText(range.start, range.finish)
-    console.log(text)
     navigator.clipboard.writeText(text)
   }
+
+  private startSelection(evt: MouseEvent) {}
+
+  private updateSelection(evt: MouseEvent) {}
+
+  private endSelection(evt: MouseEvent) {}
 
   private onKeyDown(evt: KeyboardEvent) {
     evt.preventDefault()
@@ -86,29 +91,34 @@ export class KeyEvents {
     }
   }
 
-  private events: Partial<
-    Record<
-      keyof HTMLElementEventMap,
-      (evt: HTMLElementEventMap[keyof HTMLElementEventMap]) => void
-    >
-  > = {
+  private events: Partial<TransformEventMap<HTMLElementEventMap>> = {
     focus: this.onFocus.bind(this),
     focusout: this.onFocusout.bind(this),
-    //@ts-expect-error fix later
     keydown: this.onKeyDown.bind(this),
+    mousedown: this.startSelection.bind(this),
+    mousemove: this.updateSelection.bind(this),
+    mouseup: this.endSelection.bind(this),
   }
 
   createAllListeners() {
-    Object.keys(this.events).forEach((eventKey) => {
-      const listener = this.events[eventKey as keyof HTMLElementEventMap]
+    const eventsKeys = Object.keys(this.events) as Array<
+      keyof HTMLElementEventMap
+    >
+
+    eventsKeys.forEach((eventKey) => {
+      const listener = this.events[eventKey] as (evt: Event) => void
       if (!listener) throw Error(`No such event ${eventKey}`)
       this.wrapper.addEventListener(eventKey, listener)
     })
   }
 
   deleteAllListeners() {
-    Object.keys(this.events).forEach((eventKey) => {
-      const listener = this.events[eventKey as keyof HTMLElementEventMap]
+    const eventsKeys = Object.keys(this.events) as Array<
+      keyof HTMLElementEventMap
+    >
+
+    eventsKeys.forEach((eventKey) => {
+      const listener = this.events[eventKey] as (evt: Event) => void
       if (!listener) throw Error(`No such event ${eventKey}`)
       this.wrapper.removeEventListener(eventKey, listener)
     })
