@@ -2,8 +2,10 @@ import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import {
   IEditorStore,
+  IRange,
   ISymbol,
-} from '@/entities/editor-store/editorStore.types'
+} from '@/entities/editor-store/model/editorStore.types'
+import copyToClipboard from '../lib/copyToClipboard'
 
 export const useEditorStore = create(
   immer<IEditorStore>((set, get) => ({
@@ -35,17 +37,28 @@ export const useEditorStore = create(
       })
     },
 
-    addNewSymbol(newSymbol) {
+    deleteLine(lineIndex) {
+      set((state) => {
+        state.lines = [
+          ...state.lines.slice(lineIndex),
+          ...state.lines.slice(lineIndex + 1, state.lines.length),
+        ]
+      })
+    },
+
+    addNewSymbol(...newSymbols) {
       const { indexInLine, line } = get().getCurrent()
 
-      get().changeCurrentLine([
-        ...line.slice(0, indexInLine),
-        newSymbol,
-        ...line.slice(indexInLine),
-      ])
+      newSymbols.forEach((symbol) => {
+        get().changeCurrentLine([
+          ...line.slice(0, indexInLine),
+          symbol,
+          ...line.slice(indexInLine),
+        ])
 
-      set((state) => {
-        state.currentCarriagePos.indexInLine++
+        set((state) => {
+          state.currentCarriagePos.indexInLine++
+        })
       })
     },
 
@@ -139,6 +152,21 @@ export const useEditorStore = create(
       })
     },
 
+    cut() {
+      if (get().isSelectionRange()) {
+        console.log('selection')
+      } else {
+        const { index, indexInLine, line } = get().getCurrent()
+
+        set((state) => {
+          copyToClipboard({
+            start: { line: index, indexInLine: 0 },
+            finish: { line: index, indexInLine: line.length },
+          })
+        })
+      }
+    },
+
     // getters
     getCurrentLine: () => get().lines[get().currentCarriagePos.line],
     getCurrentIndexInLine: () => get().currentCarriagePos.indexInLine,
@@ -148,10 +176,17 @@ export const useEditorStore = create(
       index: get().getCurrentLineIndex(),
       indexInLine: get().getCurrentIndexInLine(),
     }),
-
-    getText: () => {
-      let codeText = ''
+    isSelectionRange() {
       const { start, finish } = get().selectionRange
+
+      if (!start || !finish) return false
+
+      return true
+    },
+    getText: (range: IRange) => {
+      let codeText = ''
+
+      const { start, finish } = range
 
       if (!start || !finish) throw Error('nothing to select')
 
@@ -159,13 +194,18 @@ export const useEditorStore = create(
 
       const startLine = initialLines[start.line].slice(start.indexInLine)
 
-      const finishLine = initialLines[finish.line].slice(0, finish.indexInLine)
+      const finishLine =
+        start.line !== finish.line
+          ? initialLines[finish.line].slice(0, finish.indexInLine)
+          : undefined
 
-      const lines = [
-        startLine,
-        ...initialLines.slice(start.line, finish.line + 1),
-        finishLine,
-      ]
+      const lines: ISymbol[][] = []
+
+      lines.push(startLine, ...initialLines.slice(start.line, finish.line))
+
+      if (finishLine) {
+        lines.push(finishLine)
+      }
 
       lines.forEach((line, lineIndex) => {
         line.forEach((symbol) => {

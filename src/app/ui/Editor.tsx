@@ -1,8 +1,8 @@
 import { MouseEvent, useLayoutEffect, useRef, useState } from 'react'
 import { KeyEvents } from '../model/keyEvents/keyEvents'
 import { EditorProps } from '../model/editor-types'
-import { Carriage } from '@/shared/Carriage/Carriage'
-import { useEditorStore } from '@/entities/editor-store/editorStore'
+import { Carriage } from '@/shared/ui/Carriage/Carriage'
+import { useEditorStore } from '@/entities/editor-store/model/editorStore'
 import Line from './Line'
 import '../index.css'
 import {
@@ -21,6 +21,7 @@ export default function Editor(props: EditorProps) {
   const [carriageCoords, setCarriageCoords] = useState({ x: 0, y: 0 })
 
   const updateCarriageCoords = () => {
+    console.log(editorStore.currentCarriagePos)
     const { index, indexInLine } = editorStore.getCurrent()
     const initialCoords = { x: 0, y: 0 }
 
