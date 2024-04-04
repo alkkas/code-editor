@@ -1,4 +1,3 @@
-import copyToClipboard from '../../../entities/editor-store/lib/copyToClipboard'
 import { useEditorStore } from '@/entities/editor-store/model/editorStore'
 import { TransformEventMap } from '@/shared/utils/types/types'
 
@@ -29,7 +28,7 @@ export class KeyEvents {
     if (evt.key.length === 1) {
       if (evt.ctrlKey) {
         if (evt.code === 'KeyC') {
-          copyToClipboard(editorStore.selectionRange)
+          //skip
         } else if (evt.code === 'KeyX') {
           editorStore.cut()
         }

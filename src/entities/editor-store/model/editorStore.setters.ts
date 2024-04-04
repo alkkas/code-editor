@@ -1,0 +1,200 @@
+import { WritableDraft } from '@/shared/utils/types/types'
+import { IEditorStore, IPosition, ISymbol, IRange } from './editorStore.types'
+
+type IZustandSet = (
+  nextStateOrUpdater:
+    | IEditorStore
+    | Partial<IEditorStore>
+    | ((state: WritableDraft<IEditorStore>) => void),
+  shouldReplace?: boolean | undefined
+) => void
+
+type IAdditionalSetters = Record<string, (...args: unknown[]) => unknown>
+
+function mapAdditonalSetters(
+  additionalSetters: IAdditionalSetters,
+  set: IZustandSet
+) {
+  return Object.entries(additionalSetters).reduce<IAdditionalSetters>(
+    (acc, [key, value]) => {
+      acc[key] = (...args: unknown[]) => set((state) => value(...args, state))
+    },
+    {}
+  )
+}
+
+const additionalEditorSetters: IAdditionalSetters = {
+  deleteLine: (index: number, state: WritableDraft<IEditorStore>) => {
+    state.lines = [
+      ...state.lines.slice(0, index),
+      ...state.lines.slice(index + 1, state.lines.length),
+    ]
+  },
+}
+
+export default function getEditorStoreSetters(
+  get: () => IEditorStore,
+  set: IZustandSet
+) {
+  return {
+    setFocus: (value: boolean) =>
+      set((state) => {
+        state.isFocused = value
+      }),
+
+    setCarriagePos(pos: IPosition) {
+      set((state) => {
+        if (pos.line !== undefined) {
+          state.currentCarriagePos.line = pos.line
+        }
+        if (pos.indexInLine !== undefined) {
+          state.currentCarriagePos.indexInLine = pos.indexInLine
+        }
+      })
+    },
+
+    changeCurrentLine(line: ISymbol[]) {
+      set((state) => {
+        state.lines[state.getCurrentLineIndex()] = line
+      })
+    },
+
+    addNewSymbol(...newSymbols: ISymbol[]) {
+      const { indexInLine, line } = get().getCurrent()
+
+      newSymbols.forEach((symbol) => {
+        get().changeCurrentLine([
+          ...line.slice(0, indexInLine),
+          symbol,
+          ...line.slice(indexInLine),
+        ])
+
+        set((state) => {
+          state.currentCarriagePos.indexInLine++
+        })
+      })
+    },
+    deleteSymbol() {
+      const { indexInLine, line, index } = get().getCurrent()
+
+      if (indexInLine === 0) {
+        if (index === 0) return
+
+        set((state) => {
+          state.lines = [
+            ...state.lines.slice(0, index),
+            ...state.lines.slice(index + 1),
+          ]
+
+          state.lines[index - 1] = [...state.lines[index - 1], ...line]
+
+          state.currentCarriagePos.indexInLine =
+            state.lines[index - 1].length - line.length
+          state.currentCarriagePos.line = index - 1
+        })
+
+        return
+      }
+
+      get().changeCurrentLine([
+        ...line.slice(0, indexInLine - 1),
+        ...line.slice(indexInLine),
+      ])
+
+      set((state) => {
+        state.currentCarriagePos.indexInLine--
+      })
+    },
+
+    createNewLine() {
+      set((state) => {
+        const { index, indexInLine, line } = state.getCurrent()
+
+        const oldLine = line.slice(0, indexInLine)
+        const newLine = line.slice(indexInLine)
+
+        state.lines = [
+          ...state.lines.slice(0, index),
+          oldLine,
+          newLine,
+          ...state.lines.slice(index + 1),
+        ]
+
+        state.currentCarriagePos.line++
+        state.currentCarriagePos.indexInLine = 0
+      })
+    },
+
+    moveCarriage: (direction: 'up' | 'down' | 'left' | 'right') => {
+      set((state) => {
+        const moveCarriageToClosestSymbol = (line: ISymbol[]) => {
+          if (line.length < state.currentCarriagePos.indexInLine) {
+            state.currentCarriagePos.indexInLine = line.length
+          }
+        }
+
+        const { index, indexInLine, line } = state.getCurrent()
+
+        switch (direction) {
+          case 'down':
+            if (state.lines[index + 1]) {
+              state.currentCarriagePos.line++
+              moveCarriageToClosestSymbol(state.lines[index + 1])
+            }
+            break
+          case 'up':
+            if (state.lines[index - 1]) {
+              state.currentCarriagePos.line--
+              moveCarriageToClosestSymbol(state.lines[index - 1])
+            }
+            break
+          case 'left':
+            if (line[indexInLine - 1]) {
+              state.currentCarriagePos.indexInLine--
+            }
+            break
+          case 'right':
+            if (line[indexInLine]) {
+              state.currentCarriagePos.indexInLine++
+            }
+            break
+          default:
+            throw Error(`Wrong direction ${direction}`)
+        }
+      })
+    },
+    deleteLine(index: number) {
+      set((state) => _deleteLine(index, state))
+    },
+    copyToClipboard(range: IRange) {
+      const text = get().getText(range)
+      navigator.clipboard.writeText(text)
+    },
+
+    cut() {
+      if (get().isSelectionRange()) {
+        // selection
+      } else {
+        const { index, line } = get().getCurrent()
+
+        get().copyToClipboard({
+          start: { line: index, indexInLine: 0 },
+          finish: { line: index, indexInLine: line.length },
+        })
+
+        set((state) => {
+          if (state.lines.length !== 1) {
+            _deleteLine(index, state)
+            state.currentCarriagePos.line--
+          } else {
+            state.lines = [[]]
+          }
+
+          state.currentCarriagePos.indexInLine = 0
+        })
+      }
+    },
+  }
+}
+
+export type IEditorStoreSetters = ReturnType<typeof getEditorStoreSetters>

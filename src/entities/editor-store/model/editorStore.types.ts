@@ -1,3 +1,7 @@
+import { IEditorStoreGetters } from './editorStore.getters'
+import { IEditorStoreData } from './editorStore.initial'
+import { IEditorStoreSetters } from './editorStore.setters'
+
 export interface ISymbol {
   value: string
   color?: string
@@ -13,33 +17,6 @@ export interface IRange {
   finish: IPosition | undefined
 }
 
-export interface IEditorStore {
-  currentCarriagePos: IPosition
-  isFocused: boolean
-  lines: ISymbol[][]
-  selectionRange: IRange
-
-  //setters
-  setFocus: (v: boolean) => void
-  addNewSymbol: (...newSymbols: ISymbol[]) => void
-  deleteSymbol: () => void
-  moveCarriage: (direction: 'up' | 'down' | 'left' | 'right') => void
-  changeCurrentLine: (line: ISymbol[]) => void
-  createNewLine: () => void
-  deleteLine: (lineIndex: number) => void
-  setCarriagePos: (pos: Partial<IPosition>) => void
-  cut: () => void
-
-  //getters
-  getCurrentLine: () => ISymbol[]
-  getCurrentIndexInLine: () => number
-  getCurrentLineIndex: () => number
-  getCurrent: () => {
-    line: ISymbol[]
-    index: number
-    indexInLine: number
-  }
-  getText: (range: IRange) => string
-  isSelectionActive: () => boolean
-  isSelectionRange: () => boolean
-}
+export type IEditorStore = IEditorStoreSetters &
+  IEditorStoreGetters &
+  IEditorStoreData
