@@ -1,40 +1,47 @@
 import { WritableDraft } from '@/shared/utils/types/types'
 import { IEditorStore, IPosition, ISymbol, IRange } from './editorStore.types'
 
-type IZustandSet = (
-  nextStateOrUpdater:
-    | IEditorStore
-    | Partial<IEditorStore>
-    | ((state: WritableDraft<IEditorStore>) => void),
-  shouldReplace?: boolean | undefined
-) => void
+// TODO: impelement later
 
-type IAdditionalSetters = Record<string, (...args: unknown[]) => unknown>
+// type IAdditionalSetters = Record<string, (...args: unknown[]) => unknown>
 
-function mapAdditonalSetters(
-  additionalSetters: IAdditionalSetters,
-  set: IZustandSet
-) {
-  return Object.entries(additionalSetters).reduce<IAdditionalSetters>(
-    (acc, [key, value]) => {
-      acc[key] = (...args: unknown[]) => set((state) => value(...args, state))
-    },
-    {}
-  )
-}
+// function mapAdditonalSetters(
+//   additionalSetters: IAdditionalSetters,
+//   set: IZustandSet
+// ) {
+//   return Object.entries(additionalSetters).reduce<IAdditionalSetters>(
+//     (acc, [key, value]) => {
+//       acc[key] = (...args: unknown[]) => set((state) => value(...args, state))
+//     },
+//     {}
+//   )
+// }
 
-const additionalEditorSetters: IAdditionalSetters = {
-  deleteLine: (index: number, state: WritableDraft<IEditorStore>) => {
-    state.lines = [
-      ...state.lines.slice(0, index),
-      ...state.lines.slice(index + 1, state.lines.length),
-    ]
-  },
+// const additionalEditorSetters: IAdditionalSetters = {
+// deleteLine: (index: number, state: WritableDraft<IEditorStore>) => {
+//   state.lines = [
+//     ...state.lines.slice(0, index),
+//     ...state.lines.slice(index + 1, state.lines.length),
+//   ]
+// },
+// }
+
+const _deleteLine = (index: number, state: WritableDraft<IEditorStore>) => {
+  state.lines = [
+    ...state.lines.slice(0, index),
+    ...state.lines.slice(index + 1, state.lines.length),
+  ]
 }
 
 export default function getEditorStoreSetters(
   get: () => IEditorStore,
-  set: IZustandSet
+  set: (
+    nextStateOrUpdater:
+      | IEditorStore
+      | Partial<IEditorStore>
+      | ((state: WritableDraft<IEditorStore>) => void),
+    shouldReplace?: boolean | undefined
+  ) => void
 ) {
   return {
     setFocus: (value: boolean) =>
