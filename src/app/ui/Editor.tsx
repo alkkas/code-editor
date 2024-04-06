@@ -1,17 +1,15 @@
 import { MouseEvent, useLayoutEffect, useRef, useState } from 'react'
-import { KeyEvents } from '../model/keyEvents/keyEvents'
+import { KeyEvents } from '../model/KeyEvents/KeyEvents'
 import { EditorProps } from '../model/editor-types'
 import { Carriage } from '@/shared/ui/Carriage/Carriage'
 import { useEditorStore } from '@/entities/editor-store/model/editorStore'
 import Line from './Line'
 import '../index.css'
 import {
-  getClosestLine,
-  getClosestSymbol,
+  getCoords,
   lineElement,
   symbolElement,
 } from '../lib/getElements.helpers'
-import { lineAttr, symbolAttr } from '@/shared/utils/lib/elements.const'
 
 export default function Editor(props: EditorProps) {
   const wrapper = useRef<HTMLDivElement>(null)
@@ -21,7 +19,6 @@ export default function Editor(props: EditorProps) {
   const [carriageCoords, setCarriageCoords] = useState({ x: 0, y: 0 })
 
   const updateCarriageCoords = () => {
-    console.log(editorStore.currentCarriagePos)
     const { index, indexInLine } = editorStore.getCurrent()
     const initialCoords = { x: 0, y: 0 }
 
@@ -75,19 +72,13 @@ export default function Editor(props: EditorProps) {
   const clickOnEditor = (evt: MouseEvent<HTMLDivElement>) => {
     editorStore.setFocus(false)
     const target = evt.target as HTMLElement
-    const line = getClosestLine(target)
-    let lineIndex = Number(line?.getAttribute(lineAttr))
+    const coords = getCoords(target)
 
-    lineIndex = isNaN(lineIndex) ? editorStore.lines.length - 1 : lineIndex
+    editorStore.setCarriagePos({
+      line: coords.lineIndex,
+      indexInLine: coords.indexInLine,
+    })
 
-    const symbol = getClosestSymbol(target)
-
-    let indexInLine = Number(symbol?.getAttribute(symbolAttr))
-    indexInLine = isNaN(indexInLine)
-      ? editorStore.lines[lineIndex].length
-      : indexInLine
-
-    editorStore.setCarriagePos({ line: lineIndex, indexInLine })
     editorStore.setFocus(true)
   }
 
@@ -96,7 +87,7 @@ export default function Editor(props: EditorProps) {
       {...props}
       style={{ ...props.style, width: props.width, height: props.height }}
       ref={wrapper}
-      className="bg-secondary border-primary border cursor-text relative overflow-auto"
+      className="bg-secondary border-primary border cursor-text select-none relative overflow-auto"
       tabIndex={0}
     >
       <div className="relative" onClick={clickOnEditor}>

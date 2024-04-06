@@ -47,7 +47,7 @@ export default [
       external({
         includeDependencies: true,
       }),
-      terser(),
+      // terser(),
       typescript(),
     ],
   },

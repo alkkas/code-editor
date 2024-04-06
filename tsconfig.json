@@ -19,8 +19,9 @@
     "declarationDir": "dist",
     // Specify the output directory for generated declaration files
     "allowSyntheticDefaultImports": true,
+    // "forceConsistentCasingInFileNames": false,
     "paths": {
-      "@/*": ["./src/*"],
+      "@/*": ["./src/*"]
     }
   },
   "include": ["src/**/*"],

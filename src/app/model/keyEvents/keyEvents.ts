@@ -1,10 +1,30 @@
 import { useEditorStore } from '@/entities/editor-store/model/editorStore'
-import { TransformEventMap } from '@/shared/utils/types/types'
+import { EventMap } from '@/shared/utils/types/types'
+import { SelectionEvents } from './Selection.events'
 
 const editorStore = useEditorStore.getState()
 
 export class KeyEvents {
   wrapper: HTMLDivElement
+
+  private additionalEvents: Record<string, EventMap> = {
+    selection: new SelectionEvents().events,
+  }
+
+  getAdditionalEvents() {
+    return Object.keys(this.additionalEvents).reduce<EventMap>((acc, curr) => {
+      const events = this.additionalEvents[curr]
+      acc = Object.assign(acc, events)
+      return acc
+    }, {})
+  }
+
+  private events: EventMap = {
+    focus: this.onFocus.bind(this),
+    focusout: this.onFocusout.bind(this),
+    keydown: this.onKeyDown.bind(this),
+    ...this.getAdditionalEvents(),
+  }
 
   constructor(wrapper: HTMLDivElement) {
     this.wrapper = wrapper
@@ -16,12 +36,6 @@ export class KeyEvents {
   private onFocusout() {
     editorStore.setFocus(false)
   }
-
-  private startSelection(evt: MouseEvent) {}
-
-  private updateSelection(evt: MouseEvent) {}
-
-  private endSelection(evt: MouseEvent) {}
 
   private onKeyDown(evt: KeyboardEvent) {
     evt.preventDefault()
@@ -50,15 +64,6 @@ export class KeyEvents {
     } else if (evt.key === 'Enter') {
       editorStore.createNewLine()
     }
-  }
-
-  private events: Partial<TransformEventMap<HTMLElementEventMap>> = {
-    focus: this.onFocus.bind(this),
-    focusout: this.onFocusout.bind(this),
-    keydown: this.onKeyDown.bind(this),
-    mousedown: this.startSelection.bind(this),
-    mousemove: this.updateSelection.bind(this),
-    mouseup: this.endSelection.bind(this),
   }
 
   createAllListeners() {
