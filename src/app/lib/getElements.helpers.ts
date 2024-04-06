@@ -30,7 +30,7 @@ export const getCoords = (target: HTMLElement) => {
   const symbol = getClosestSymbol(target)
 
   let indexInLine = Number(symbol?.getAttribute(symbolAttr))
-  console.log(lineIndex, editorStore.lines)
+
   indexInLine = isNaN(indexInLine)
     ? editorStore.lines[lineIndex].length
     : indexInLine

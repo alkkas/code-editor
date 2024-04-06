@@ -1,15 +1,11 @@
-import { MouseEvent, useLayoutEffect, useRef, useState } from 'react'
-import { KeyEvents } from '../model/KeyEvents/KeyEvents'
+import { useLayoutEffect, useRef, useState } from 'react'
+import { KeyEvents } from '../model/events/KeyEvents'
 import { EditorProps } from '../model/editor-types'
 import { Carriage } from '@/shared/ui/Carriage/Carriage'
 import { useEditorStore } from '@/entities/editor-store/model/editorStore'
 import Line from './Line'
+import { lineElement, symbolElement } from '../lib/getElements.helpers'
 import '../index.css'
-import {
-  getCoords,
-  lineElement,
-  symbolElement,
-} from '../lib/getElements.helpers'
 
 export default function Editor(props: EditorProps) {
   const wrapper = useRef<HTMLDivElement>(null)
@@ -69,19 +65,6 @@ export default function Editor(props: EditorProps) {
     return keyEvents.deleteAllListeners.bind(keyEvents)
   }, [])
 
-  const clickOnEditor = (evt: MouseEvent<HTMLDivElement>) => {
-    editorStore.setFocus(false)
-    const target = evt.target as HTMLElement
-    const coords = getCoords(target)
-
-    editorStore.setCarriagePos({
-      line: coords.lineIndex,
-      indexInLine: coords.indexInLine,
-    })
-
-    editorStore.setFocus(true)
-  }
-
   return (
     <div
       {...props}
@@ -90,7 +73,7 @@ export default function Editor(props: EditorProps) {
       className="bg-secondary border-primary border cursor-text select-none relative overflow-auto"
       tabIndex={0}
     >
-      <div className="relative" onClick={clickOnEditor}>
+      <div className="relative">
         {editorStore.isFocused && (
           <Carriage
             fontSize={fontSize}

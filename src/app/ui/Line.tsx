@@ -25,6 +25,37 @@ const areLinesEqual = (line1: ISymbol[], line2: ISymbol[]) => {
 
 const Line = memo(
   function Line(props: LineProps) {
+    const editorStore = useEditorStore()
+
+    const symbolBorder = (lineIndex: number, symbolIndex: number) => {
+      let symbolClassName = ''
+
+      const { start, finish } = editorStore.selectionRange
+      if (!start || !finish) return symbolClassName
+
+      if (
+        lineIndex <= start.line &&
+        lineIndex >= finish.line &&
+        symbolIndex >= start.indexInLine &&
+        symbolIndex <= finish.indexInLine
+      ) {
+        symbolClassName += 'bg-slate-400'
+
+        if (symbolIndex === start.indexInLine || symbolIndex === 0) {
+          symbolClassName += ' rounded-l-md'
+        }
+
+        if (
+          symbolIndex === finish.indexInLine ||
+          symbolIndex === editorStore.lines[lineIndex].length - 1
+        ) {
+          symbolClassName += ' rounded-r-md'
+        }
+      }
+
+      return symbolClassName
+    }
+
     return (
       <div key={props.index} className="flex items-stretch">
         <LineNumber count={props.index + 1} />
@@ -33,7 +64,11 @@ const Line = memo(
           className="flex items-center w-full"
         >
           {props.line.map((symbol, symbol_idx) => (
-            <span key={symbol_idx} {...{ [symbolAttr]: symbol_idx }}>
+            <span
+              key={symbol_idx}
+              {...{ [symbolAttr]: symbol_idx }}
+              className={symbolBorder(props.index, symbol_idx)}
+            >
               {symbol.value === ' ' ? <>&nbsp;</> : symbol.value}
             </span>
           ))}

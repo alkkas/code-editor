@@ -178,6 +178,21 @@ export default function getEditorStoreSetters(
       navigator.clipboard.writeText(text)
     },
 
+    changeSelectionRange(range: Partial<IRange>) {
+      set((state) => {
+        if (range.start) {
+          state.selectionRange.start = range.start
+        }
+        if (range.finish) {
+          state.selectionRange.finish = range.finish
+        }
+      })
+    },
+    clearSelectionRange() {
+      set((state) => {
+        state.selectionRange = { start: undefined, finish: undefined }
+      })
+    },
     cut() {
       if (get().isSelectionRange()) {
         // selection
