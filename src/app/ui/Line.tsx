@@ -30,23 +30,27 @@ const Line = memo(
     const symbolBorder = (lineIndex: number, symbolIndex: number) => {
       let symbolClassName = ''
 
-      const { start, finish } = editorStore.selectionRange
-      if (!start || !finish) return symbolClassName
+      if (!editorStore.isSelectionActive()) return symbolClassName
 
+      const { start, finish } = editorStore.getSelectionRange()
+      //TODO: fix bugs
       if (
-        lineIndex <= start.line &&
-        lineIndex >= finish.line &&
-        symbolIndex >= start.indexInLine &&
-        symbolIndex <= finish.indexInLine
+        lineIndex >= start.line &&
+        lineIndex <= finish.line &&
+        (lineIndex === start.line ? symbolIndex >= start.indexInLine : true) &&
+        (lineIndex === finish.line ? symbolIndex <= finish.indexInLine : true)
       ) {
         symbolClassName += 'bg-slate-400'
 
-        if (symbolIndex === start.indexInLine || symbolIndex === 0) {
+        if (
+          (lineIndex === start.line && symbolIndex === start.indexInLine) ||
+          symbolIndex === 0
+        ) {
           symbolClassName += ' rounded-l-md'
         }
 
         if (
-          symbolIndex === finish.indexInLine ||
+          (lineIndex === finish.line && symbolIndex === finish.indexInLine) ||
           symbolIndex === editorStore.lines[lineIndex].length - 1
         ) {
           symbolClassName += ' rounded-r-md'
@@ -77,6 +81,8 @@ const Line = memo(
     )
   },
   (prevProps, nextProps) => {
+    //TODO: fix memoization
+    return false
     const editorStore = useEditorStore.getState()
 
     if (prevProps.index !== nextProps.index) return false

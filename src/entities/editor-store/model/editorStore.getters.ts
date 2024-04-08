@@ -10,16 +10,30 @@ export default function getEditorStoreGetters(get: () => IEditorStore) {
       index: get().getCurrentLineIndex(),
       indexInLine: get().getCurrentIndexInLine(),
     }),
-    isSelectionRange() {
+    getSelectionRange() {
       const { start, finish } = get().selectionRange
 
-      if (!start || !finish) return false
+      if (!start || !finish) throw Error('no range')
 
-      return true
+      let vStart = start
+      let vFinish = finish
+
+      if (
+        vStart.line > vFinish.line ||
+        (vStart.line === vFinish.line &&
+          vStart.indexInLine > vFinish.indexInLine)
+      ) {
+        const startTemp = vStart
+        const finishTemp = vFinish
+
+        vStart = finishTemp
+        vFinish = startTemp
+      }
+
+      return { start: vStart, finish: vFinish }
     },
-    getText: (range: IRange) => {
-      let codeText = ''
 
+    getText: (range: IRange) => {
       const { start, finish } = range
 
       if (!start || !finish) throw Error('nothing to select')
@@ -28,19 +42,24 @@ export default function getEditorStoreGetters(get: () => IEditorStore) {
 
       const startLine = initialLines[start.line].slice(start.indexInLine)
 
+      if (start.line === finish.line) {
+        startLine.splice(0, finish.indexInLine)
+      }
+
       const finishLine =
         start.line !== finish.line
-          ? initialLines[finish.line].slice(0, finish.indexInLine)
+          ? initialLines[finish.line].slice(0, finish.indexInLine + 1)
           : undefined
 
       const lines: ISymbol[][] = []
 
-      lines.push(startLine, ...initialLines.slice(start.line, finish.line))
+      lines.push(startLine, ...initialLines.slice(start.line + 1, finish.line))
 
       if (finishLine) {
         lines.push(finishLine)
       }
 
+      let codeText = ''
       lines.forEach((line, lineIndex) => {
         line.forEach((symbol) => {
           codeText += symbol.value
@@ -52,6 +71,8 @@ export default function getEditorStoreGetters(get: () => IEditorStore) {
 
       return codeText
     },
+
+    parseText(text: string) {},
 
     isSelectionActive: () => {
       return !!(get().selectionRange.start && get().selectionRange.finish)

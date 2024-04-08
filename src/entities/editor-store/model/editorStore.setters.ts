@@ -81,6 +81,7 @@ export default function getEditorStoreSetters(
         })
       })
     },
+
     deleteSymbol() {
       const { indexInLine, line, index } = get().getCurrent()
 
@@ -170,9 +171,11 @@ export default function getEditorStoreSetters(
         }
       })
     },
+
     deleteLine(index: number) {
       set((state) => _deleteLine(index, state))
     },
+
     copyToClipboard(range: IRange) {
       const text = get().getText(range)
       navigator.clipboard.writeText(text)
@@ -194,7 +197,7 @@ export default function getEditorStoreSetters(
       })
     },
     cut() {
-      if (get().isSelectionRange()) {
+      if (get().isSelectionActive()) {
         // selection
       } else {
         const { index, line } = get().getCurrent()

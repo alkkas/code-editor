@@ -42,7 +42,7 @@ export class KeyEvents {
     if (evt.key.length === 1) {
       if (evt.ctrlKey) {
         if (evt.code === 'KeyC') {
-          //skip
+          editorStore.copyToClipboard(editorStore.getSelectionRange())
         } else if (evt.code === 'KeyX') {
           editorStore.cut()
         }

@@ -73,14 +73,18 @@ export default function Editor(props: EditorProps) {
       className="bg-secondary border-primary border cursor-text select-none relative overflow-auto"
       tabIndex={0}
     >
+      {editorStore.isFocused && (
+        <Carriage
+          fontSize={fontSize}
+          left={carriageCoords.x}
+          top={carriageCoords.y}
+        />
+      )}
       <div className="relative">
-        {editorStore.isFocused && (
-          <Carriage
-            fontSize={fontSize}
-            left={carriageCoords.x}
-            top={carriageCoords.y}
-          />
-        )}
+        {/* 
+          put nothing else here except of lines 
+          because foreign elements will cause wrong selection
+        */}
         {editorStore.lines.map((line, line_idx) => (
           <Line line={line} index={line_idx} key={line_idx} />
         ))}
