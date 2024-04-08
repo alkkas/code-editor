@@ -2,9 +2,9 @@ import { IEditorStore, IRange, ISymbol } from './editorStore.types'
 
 export default function getEditorStoreGetters(get: () => IEditorStore) {
   return {
-    getCurrentLine: () => get().lines[get().currentCarriagePos.line],
+    getCurrentLine: () => get().lines[get().currentCarriagePos.lineIndex],
     getCurrentIndexInLine: () => get().currentCarriagePos.indexInLine,
-    getCurrentLineIndex: () => get().currentCarriagePos.line,
+    getCurrentLineIndex: () => get().currentCarriagePos.lineIndex,
     getCurrent: () => ({
       line: get().getCurrentLine(),
       index: get().getCurrentLineIndex(),
@@ -19,8 +19,8 @@ export default function getEditorStoreGetters(get: () => IEditorStore) {
       let vFinish = finish
 
       if (
-        vStart.line > vFinish.line ||
-        (vStart.line === vFinish.line &&
+        vStart.lineIndex > vFinish.lineIndex ||
+        (vStart.lineIndex === vFinish.lineIndex &&
           vStart.indexInLine > vFinish.indexInLine)
       ) {
         const startTemp = vStart
@@ -40,20 +40,23 @@ export default function getEditorStoreGetters(get: () => IEditorStore) {
 
       const initialLines = get().lines
 
-      const startLine = initialLines[start.line].slice(start.indexInLine)
+      const startLine = initialLines[start.lineIndex].slice(start.indexInLine)
 
-      if (start.line === finish.line) {
+      if (start.lineIndex === finish.lineIndex) {
         startLine.splice(0, finish.indexInLine)
       }
 
       const finishLine =
-        start.line !== finish.line
-          ? initialLines[finish.line].slice(0, finish.indexInLine + 1)
+        start.lineIndex !== finish.lineIndex
+          ? initialLines[finish.lineIndex].slice(0, finish.indexInLine + 1)
           : undefined
 
       const lines: ISymbol[][] = []
 
-      lines.push(startLine, ...initialLines.slice(start.line + 1, finish.line))
+      lines.push(
+        startLine,
+        ...initialLines.slice(start.lineIndex + 1, finish.lineIndex)
+      )
 
       if (finishLine) {
         lines.push(finishLine)

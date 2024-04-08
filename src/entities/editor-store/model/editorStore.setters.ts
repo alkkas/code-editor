@@ -51,8 +51,8 @@ export default function getEditorStoreSetters(
 
     setCarriagePos(pos: IPosition) {
       set((state) => {
-        if (pos.line !== undefined) {
-          state.currentCarriagePos.line = pos.line
+        if (pos.lineIndex !== undefined) {
+          state.currentCarriagePos.lineIndex = pos.lineIndex
         }
         if (pos.indexInLine !== undefined) {
           state.currentCarriagePos.indexInLine = pos.indexInLine
@@ -98,7 +98,7 @@ export default function getEditorStoreSetters(
 
           state.currentCarriagePos.indexInLine =
             state.lines[index - 1].length - line.length
-          state.currentCarriagePos.line = index - 1
+          state.currentCarriagePos.lineIndex = index - 1
         })
 
         return
@@ -128,7 +128,7 @@ export default function getEditorStoreSetters(
           ...state.lines.slice(index + 1),
         ]
 
-        state.currentCarriagePos.line++
+        state.currentCarriagePos.lineIndex++
         state.currentCarriagePos.indexInLine = 0
       })
     },
@@ -146,13 +146,13 @@ export default function getEditorStoreSetters(
         switch (direction) {
           case 'down':
             if (state.lines[index + 1]) {
-              state.currentCarriagePos.line++
+              state.currentCarriagePos.lineIndex++
               moveCarriageToClosestSymbol(state.lines[index + 1])
             }
             break
           case 'up':
             if (state.lines[index - 1]) {
-              state.currentCarriagePos.line--
+              state.currentCarriagePos.lineIndex--
               moveCarriageToClosestSymbol(state.lines[index - 1])
             }
             break
@@ -203,14 +203,14 @@ export default function getEditorStoreSetters(
         const { index, line } = get().getCurrent()
 
         get().copyToClipboard({
-          start: { line: index, indexInLine: 0 },
-          finish: { line: index, indexInLine: line.length },
+          start: { lineIndex: index, indexInLine: 0 },
+          finish: { lineIndex: index, indexInLine: line.length },
         })
 
         set((state) => {
           if (state.lines.length !== 1) {
             _deleteLine(index, state)
-            state.currentCarriagePos.line--
+            state.currentCarriagePos.lineIndex--
           } else {
             state.lines = [[]]
           }

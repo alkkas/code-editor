@@ -8,7 +8,7 @@ export interface ISymbol {
 }
 
 export interface IPosition {
-  line: number
+  lineIndex: number
   indexInLine: number
 }
 

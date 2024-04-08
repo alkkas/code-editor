@@ -20,11 +20,11 @@ export class SelectionEvents implements EventBase {
     const coords = getCoords(evt.target as HTMLElement)
 
     this.editorStore.changeSelectionRange({
-      start: { indexInLine: coords.indexInLine, line: coords.lineIndex },
+      start: { indexInLine: coords.indexInLine, lineIndex: coords.lineIndex },
     })
 
     this.editorStore.setCarriagePos({
-      line: coords.lineIndex,
+      lineIndex: coords.lineIndex,
       indexInLine: coords.indexInLine,
     })
 
@@ -39,12 +39,12 @@ export class SelectionEvents implements EventBase {
     this.editorStore.changeSelectionRange({
       finish: {
         indexInLine: coords.indexInLine !== 0 ? coords.indexInLine - 1 : 0,
-        line: coords.lineIndex,
+        lineIndex: coords.lineIndex,
       },
     })
 
     this.editorStore.setCarriagePos({
-      line: coords.lineIndex,
+      lineIndex: coords.lineIndex,
       indexInLine: coords.indexInLine,
     })
   }
