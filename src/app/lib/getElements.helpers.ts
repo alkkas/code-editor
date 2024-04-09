@@ -1,4 +1,4 @@
-import { useEditorStore } from '@/entities/editor-store/model/editorStore'
+import { useEditorStore } from '@/store/editorStore'
 import { lineAttr, symbolAttr } from '@/shared/utils/lib/elements.const'
 
 export const lineElement = (index?: number) => {

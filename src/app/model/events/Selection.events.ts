@@ -1,7 +1,7 @@
 import { EventMap } from '@/shared/utils/types/types'
 import { getCoords } from '../../lib/getElements.helpers'
 import { EventBase } from './Event.base'
-import { useEditorStore } from '@/entities/editor-store/model/editorStore'
+import { useEditorStore } from '@/store/editorStore'
 
 export class SelectionEvents implements EventBase {
   events: EventMap = {

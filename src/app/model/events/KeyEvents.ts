@@ -1,4 +1,4 @@
-import { useEditorStore } from '@/entities/editor-store/model/editorStore'
+import { useEditorStore } from '@/store/editorStore'
 import { EventMap } from '@/shared/utils/types/types'
 import { SelectionEvents } from './Selection.events'
 

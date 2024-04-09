@@ -1,7 +1,7 @@
 import LineNumber from '@/shared/ui/LineNumber/LineNumber'
-import { ISymbol } from '@/entities/editor-store/model/editorStore.types'
+import { ISymbol } from '@/store/editorStore.types'
 import { memo } from 'react'
-import { useEditorStore } from '@/entities/editor-store/model/editorStore'
+import { useEditorStore } from '@/store/editorStore'
 import { lineAttr, symbolAttr } from '@/shared/utils/lib/elements.const'
 
 interface LineProps {
