@@ -181,6 +181,12 @@ export default function getEditorStoreSetters(
       navigator.clipboard.writeText(text)
     },
 
+    async pasteText() {
+      // const copiedText = await navigator.clipboard.readText()
+      // console.log(new window.Clipboard())
+      // console.log(get().parseText(copiedText))
+    },
+
     changeSelectionRange(range: Partial<IRange>) {
       set((state) => {
         if (range.start) {

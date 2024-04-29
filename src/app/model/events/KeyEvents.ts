@@ -45,6 +45,8 @@ export class KeyEvents {
           editorStore.copyToClipboard(editorStore.getSelectionRange())
         } else if (evt.code === 'KeyX') {
           editorStore.cut()
+        } else if (evt.code === 'KeyV') {
+          editorStore.pasteText()
         }
         return
       }

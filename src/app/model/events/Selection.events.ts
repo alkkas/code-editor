@@ -9,6 +9,7 @@ export class SelectionEvents implements EventBase {
     mousemove: this.updateSelection.bind(this),
     mouseup: this.endSelection.bind(this),
   }
+
   editorStore = useEditorStore.getState()
   isSelecting = false
 

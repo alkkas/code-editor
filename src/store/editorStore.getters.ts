@@ -26,7 +26,7 @@ export default function getEditorStoreGetters(get: () => IEditorStore) {
         const startTemp = vStart
         const finishTemp = vFinish
 
-        vStart = finishTemp
+        vStart = { ...finishTemp, indexInLine: finishTemp.indexInLine + 1 }
         vFinish = startTemp
       }
 
@@ -40,10 +40,13 @@ export default function getEditorStoreGetters(get: () => IEditorStore) {
 
       const initialLines = get().lines
 
-      const startLine = initialLines[start.lineIndex].slice(start.indexInLine)
+      let startLine = initialLines[start.lineIndex].slice(start.indexInLine)
 
       if (start.lineIndex === finish.lineIndex) {
-        startLine.splice(0, finish.indexInLine)
+        startLine = startLine.slice(
+          0,
+          finish.indexInLine - start.indexInLine + 1
+        )
       }
 
       const finishLine =
@@ -75,7 +78,20 @@ export default function getEditorStoreGetters(get: () => IEditorStore) {
       return codeText
     },
 
-    parseText(text: string) {},
+    parseText(text: string) {
+      const lines: ISymbol[][] = [[]]
+      let currentLine = 0
+
+      text.split('').forEach((symbol) => {
+        if (symbol === '\n') {
+          lines.push([])
+          currentLine++
+        } else {
+          lines[currentLine].push({ value: symbol })
+        }
+      })
+      return lines
+    },
 
     isSelectionActive: () => {
       return !!(get().selectionRange.start && get().selectionRange.finish)
