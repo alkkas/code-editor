@@ -187,17 +187,18 @@ export default function getEditorStoreSetters(
       if (!lines.length) return
 
       set((state) => {
-        const currentLine = state.getCurrentLine()
+        let currentLine = state.getCurrentLine()
 
-        state.lines[state.currentCarriagePos.lineIndex] = [
+        currentLine = state.lines[state.currentCarriagePos.lineIndex] = [
           ...currentLine,
           ...lines[0],
         ]
 
         state.lines = [
           ...state.lines.slice(0, state.currentCarriagePos.lineIndex),
+          currentLine,
           ...lines.slice(1),
-          ...state.lines.slice(state.currentCarriagePos.lineIndex),
+          ...state.lines.slice(state.currentCarriagePos.lineIndex + 1),
         ]
       })
     },
