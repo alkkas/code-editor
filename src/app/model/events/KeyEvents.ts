@@ -37,16 +37,22 @@ export class KeyEvents {
     editorStore.setFocus(false)
   }
 
+  private paste(e: ClipboardEvent) {
+    if (!useEditorStore.getState().isFocused) return
+
+    const text = e.clipboardData?.getData('Text')
+    if (!text) return
+
+    editorStore.pasteText(text)
+  }
+
   private onKeyDown(evt: KeyboardEvent) {
-    evt.preventDefault()
     if (evt.key.length === 1) {
       if (evt.ctrlKey) {
         if (evt.code === 'KeyC') {
           editorStore.copyToClipboard(editorStore.getSelectionRange())
         } else if (evt.code === 'KeyX') {
           editorStore.cut()
-        } else if (evt.code === 'KeyV') {
-          editorStore.pasteText()
         }
         return
       }
@@ -78,6 +84,7 @@ export class KeyEvents {
       if (!listener) throw Error(`No such event ${eventKey}`)
       this.wrapper.addEventListener(eventKey, listener)
     })
+    document.addEventListener('paste', this.paste)
   }
 
   deleteAllListeners() {
@@ -90,5 +97,6 @@ export class KeyEvents {
       if (!listener) throw Error(`No such event ${eventKey}`)
       this.wrapper.removeEventListener(eventKey, listener)
     })
+    document.removeEventListener('paste', this.paste)
   }
 }

@@ -181,10 +181,25 @@ export default function getEditorStoreSetters(
       navigator.clipboard.writeText(text)
     },
 
-    async pasteText() {
-      // const copiedText = await navigator.clipboard.readText()
-      // console.log(new window.Clipboard())
-      // console.log(get().parseText(copiedText))
+    async pasteText(text: string) {
+      const lines = get().parseText(text)
+
+      if (!lines.length) return
+
+      set((state) => {
+        const currentLine = state.getCurrentLine()
+
+        state.lines[state.currentCarriagePos.lineIndex] = [
+          ...currentLine,
+          ...lines[0],
+        ]
+
+        state.lines = [
+          ...state.lines.slice(0, state.currentCarriagePos.lineIndex),
+          ...lines.slice(1),
+          ...state.lines.slice(state.currentCarriagePos.lineIndex),
+        ]
+      })
     },
 
     changeSelectionRange(range: Partial<IRange>) {
