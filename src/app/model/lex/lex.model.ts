@@ -1,5 +1,6 @@
 type LexModel = {
   keywords: string[]
-  comments: { singleLine: string; multiLine: { start: string; finish: string } }
+  operators: string[]
+  comments: { singleLine: RegExp; multiLine: { start: RegExp; finish: RegExp } }
   tokens: Record<string, unknown>
 }
