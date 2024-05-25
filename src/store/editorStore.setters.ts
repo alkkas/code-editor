@@ -1,7 +1,7 @@
 import { WritableDraft } from '@/shared/utils/types/types'
 import { IEditorStore, IPosition, ISymbol, IRange } from './editorStore.types'
 
-// TODO: impelement later
+// TODO: implement later
 
 // type IAdditionalSetters = Record<string, (...args: unknown[]) => unknown>
 
