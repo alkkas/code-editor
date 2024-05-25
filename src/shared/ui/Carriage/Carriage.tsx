@@ -15,7 +15,7 @@ export const Carriage = ({ fontSize, top, left }: CarriageProps) => {
         top,
         left,
       }}
-      className="animate-blink bg-primary absolute"
+      className="animate-blink bg-primary absolute z-50"
     />
   )
 }
