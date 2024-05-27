@@ -1,6 +1,7 @@
 import React from 'react'
 import { DeepPartial } from '@/shared/utils/types/types'
 import { ILexTheme } from './lex/lexTheme.model'
+import { LanguageName } from './languages/map'
 
 export const defaultEditorTextTheme: ILexTheme = {
   $keywords: '#ef476f',
@@ -17,6 +18,7 @@ interface ITheme {
     secondary: string
   }
   editorText: ILexTheme
+  language: LanguageName
 }
 
 export interface EditorProps extends React.HTMLAttributes<HTMLDivElement> {

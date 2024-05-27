@@ -1,4 +1,7 @@
+import { LanguageName } from '@/app/model/languages/map'
 import { IPosition, IRange, ISymbol } from './editorStore.types'
+import { ILexTheme } from '@/app/model/lex/lexTheme.model'
+import { defaultEditorTextTheme } from '@/app/model/editor-types'
 
 export default function getEditorStoreInitialState() {
   return {
@@ -7,6 +10,10 @@ export default function getEditorStoreInitialState() {
     isFocused: false,
     lines: [[]] as ISymbol[][],
     selectionRange: { start: undefined, finish: undefined } as IRange,
+    language: {
+      name: null as LanguageName | null,
+      theme: defaultEditorTextTheme as ILexTheme,
+    },
   }
 }
 

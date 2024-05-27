@@ -1,5 +1,5 @@
-import { LexModel } from '../lex/lex.model'
-import { ILexTheme } from '../lex/lexTheme.model'
+import { LexModel } from '../../lex/lex.model'
+import { ILexTheme } from '../../lex/lexTheme.model'
 
 export const tsConfiguration: LexModel<ILexTheme> = {
   $keywords: [
