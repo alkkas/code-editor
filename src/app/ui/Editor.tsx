@@ -14,7 +14,7 @@ export default function Editor(props: EditorProps) {
   const fontSize = props.fontSize ?? DEFAULT_FONT_SIZE
   const editorStore = useEditorStore()
   const wrapperTheme = props.theme?.main
-  const textTheme = props.theme?.editorText ?? defaultEditorTextTheme
+  const theme = props.theme
 
   const [carriageCoords, setCarriageCoords] = useState({ x: 0, y: 0 })
 
@@ -54,10 +54,9 @@ export default function Editor(props: EditorProps) {
     setCarriageCoords(initialCoords)
   }
 
-  useLayoutEffect(updateCarriageCoords, [
-    editorStore.getCurrentLineIndex(),
-    editorStore.getCurrentIndexInLine(),
-  ])
+  useLayoutEffect(() => {
+    updateCarriageCoords()
+  }, [editorStore.getCurrentLineIndex(), editorStore.getCurrentIndexInLine()])
 
   useLayoutEffect(() => {
     if (!wrapper.current) throw new Error('wrapper component is null')

@@ -1,5 +1,8 @@
 import { WritableDraft } from '@/shared/utils/types/types'
 import { IEditorStore, IPosition, ISymbol, IRange } from './editorStore.types'
+import { LanguageName, languagesMap } from '@/app/model/languages/map'
+import { ILexTheme } from '@/app/model/lex/lexTheme.model'
+import { Itoken } from '@/app/model/lex/lex.model'
 
 // TODO: implement later
 
@@ -239,6 +242,31 @@ export default function getEditorStoreSetters(
 
           state.currentCarriagePos.indexInLine = 0
         })
+      }
+    },
+    highLightSyntax(language: LanguageName, theme: ILexTheme) {
+      const langConf = languagesMap[language]
+
+      let currentToken: Itoken<typeof theme> | null = null
+
+      let currentText = ''
+
+      for (const line of get().lines) {
+        for (const symbol of line) {
+          currentText += symbol.value
+
+          if (currentToken) {
+            if (currentText.match(currentToken[0])) {
+            }
+            if (!currentText.match(currentToken[0])) currentToken = null
+          }
+
+          for (const token of langConf.tokenizer) {
+            if (currentText.match(token[0])) {
+              currentToken = token
+            }
+          }
+        }
       }
     },
   }
