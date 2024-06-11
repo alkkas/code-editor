@@ -1,5 +1,5 @@
 import { WritableDraft } from '@/shared/utils/types/types'
-import { IEditorStore, IPosition, ISymbol, IRange } from './editorStore.types'
+import { IEditorStore, IPosition, ISymbol, IRange, IFullRange } from './editorStore.types'
 import { LanguageName, languagesMap } from '@/app/model/languages/map'
 import { ILexTheme } from '@/app/model/lex/lexTheme.model'
 import { Itoken } from '@/app/model/lex/lex.model'
@@ -245,28 +245,69 @@ export default function getEditorStoreSetters(
       }
     },
     highLightSyntax(language: LanguageName, theme: ILexTheme) {
+      const isTokenArray = (token: keyof ILexTheme) => {
+        return token[0] === '$'
+      }
+
+      const paintSymbols = (range: IRange, color: string) => {
+        set((state) => {
+          state.
+        })
+      }
+
       const langConf = languagesMap[language]
 
-      let currentToken: Itoken<typeof theme> | null = null
+      let currentTokens: Itoken<typeof theme> | null = null
 
       let currentText = ''
+      let range: IFullRange= {
+        start: {indexInLine: 0, lineIndex: -1},
+        finish: {indexInLine: 0, lineIndex: -1},
+      }
 
-      for (const line of get().lines) {
-        for (const symbol of line) {
+
+      for (let lineIndex  = 0; lineIndex < get().lines.length; lineIndex++) {
+
+        const line = get().lines[lineIndex]
+        range.start.lineIndex = lineIndex
+        range.finish.lineIndex = lineIndex
+
+        for (let symbolIndex = 0; symbolIndex < line.length; symbolIndex++) {
+          const symbol = line[symbolIndex]
+          range.finish.indexInLine = symbolIndex
           currentText += symbol.value
 
-          if (currentToken) {
-            if (currentText.match(currentToken[0])) {
+          if (currentTokens) {
+            if (currentText.match(currentTokens[0])) {
+              for (const token of currentTokens.slice(1)) {
+                const tkn = token as keyof ILexTheme
+                if (isTokenArray(tkn)) {
+                  //@ts-expect-error
+                  const tknArr = langConf[tkn] as string[]
+
+                  if (!tknArr?.includes(currentText)) continue
+
+                  paintSymbols(range, theme[tkn])
+                } else {
+                  paintSymbols(range, theme[tkn])
+                }
+              }
+              currentText = ''
             }
-            if (!currentText.match(currentToken[0])) currentToken = null
+            currentTokens = null
           }
 
           for (const token of langConf.tokenizer) {
             if (currentText.match(token[0])) {
-              currentToken = token
+              currentTokens = token
             }
           }
         }
+
+        currentText = ''
+        currentTokens = null
+        range.start.indexInLine = 0
+        range.finish.indexInLine = 0
       }
     },
   }

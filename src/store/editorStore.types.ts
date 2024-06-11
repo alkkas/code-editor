@@ -11,11 +11,11 @@ export interface IPosition {
   lineIndex: number
   indexInLine: number
 }
-
-export interface IRange {
-  start: IPosition | undefined
-  finish: IPosition | undefined
+export interface IFullRange {
+  start: IPosition
+  finish: IPosition
 }
+export type IRange = Partial<IFullRange>
 
 export type IEditorStore = IEditorStoreSetters &
   IEditorStoreGetters &
