@@ -13,18 +13,18 @@ export const defaultEditorTextTheme: ILexTheme = {
 }
 
 interface ITheme {
-  main: {
+  main: Partial<{
     primary: string
     secondary: string
-  }
-  editorText: ILexTheme
+  }>
+  editorText?: ILexTheme
   language: LanguageName
 }
 
 export interface EditorProps extends React.HTMLAttributes<HTMLDivElement> {
   wrapperClassName?: string
   fontSize?: number
-  theme?: DeepPartial<ITheme>
+  theme: ITheme
   width: number
   height: number
 }

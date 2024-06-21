@@ -1,8 +1,9 @@
 import { WritableDraft } from '@/shared/utils/types/types'
-import { IEditorStore, IPosition, ISymbol, IRange, IFullRange } from './editorStore.types'
+import { IEditorStore, IPosition, ISymbol, IRange } from './editorStore.types'
 import { LanguageName, languagesMap } from '@/app/model/languages/map'
 import { ILexTheme } from '@/app/model/lex/lexTheme.model'
 import { Itoken } from '@/app/model/lex/lex.model'
+import { defaultEditorTextTheme } from '@/app/model/editor-types'
 
 // TODO: implement later
 
@@ -244,15 +245,18 @@ export default function getEditorStoreSetters(
         })
       }
     },
-    highLightSyntax(language: LanguageName, theme: ILexTheme) {
-      const isTokenArray = (token: keyof ILexTheme) => {
-        return token[0] === '$'
+    highLightSyntax(
+      language: LanguageName,
+      theme: ILexTheme = defaultEditorTextTheme
+    ) {
+      interface IOneLineRange {
+        lineIndex: number
+        start: number
+        finish: number
       }
 
-      const paintSymbols = (range: IRange, color: string) => {
-        set((state) => {
-          state.
-        })
+      const isTokenArray = (token: keyof ILexTheme) => {
+        return token[0] === '$'
       }
 
       const langConf = languagesMap[language]
@@ -260,21 +264,30 @@ export default function getEditorStoreSetters(
       let currentTokens: Itoken<typeof theme> | null = null
 
       let currentText = ''
-      let range: IFullRange= {
-        start: {indexInLine: 0, lineIndex: -1},
-        finish: {indexInLine: 0, lineIndex: -1},
+
+      const range: IOneLineRange = {
+        lineIndex: 0,
+        start: 0,
+        finish: 0,
       }
 
+      const paintSymbols = (range: IOneLineRange, color: string) => {
+        set((state) => {
+          state.lines[range.lineIndex].forEach((symbol, index) => {
+            if (index >= range.start && index <= range.finish) {
+              symbol.color = color
+            }
+          })
+        })
+      }
 
-      for (let lineIndex  = 0; lineIndex < get().lines.length; lineIndex++) {
-
+      for (let lineIndex = 0; lineIndex < get().lines.length; lineIndex++) {
         const line = get().lines[lineIndex]
-        range.start.lineIndex = lineIndex
-        range.finish.lineIndex = lineIndex
+        range.lineIndex = lineIndex
 
         for (let symbolIndex = 0; symbolIndex < line.length; symbolIndex++) {
           const symbol = line[symbolIndex]
-          range.finish.indexInLine = symbolIndex
+          range.finish = symbolIndex
           currentText += symbol.value
 
           if (currentTokens) {
@@ -306,8 +319,8 @@ export default function getEditorStoreSetters(
 
         currentText = ''
         currentTokens = null
-        range.start.indexInLine = 0
-        range.finish.indexInLine = 0
+        range.start = 0
+        range.finish = 0
       }
     },
   }
