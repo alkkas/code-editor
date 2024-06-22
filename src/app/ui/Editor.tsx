@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 import { KeyEvents } from '../model/events/KeyEvents'
-import { EditorProps, defaultEditorTextTheme } from '../model/editor-types'
+import { EditorProps } from '../model/editor-types'
 import { Carriage } from '@/shared/ui/Carriage/Carriage'
 import { useEditorStore } from '@/store/editorStore'
 import Line from './Line'
@@ -13,8 +13,6 @@ export default function Editor(props: EditorProps) {
   const wrapper = useRef<HTMLDivElement>(null)
   const fontSize = props.fontSize ?? DEFAULT_FONT_SIZE
   const editorStore = useEditorStore()
-  const wrapperTheme = props.theme?.main
-  const theme = props.theme
 
   const [carriageCoords, setCarriageCoords] = useState({ x: 0, y: 0 })
 

@@ -47,6 +47,7 @@ export class KeyEvents {
   }
 
   private onKeyDown(evt: KeyboardEvent) {
+    evt.preventDefault()
     if (evt.key.length === 1) {
       if (evt.ctrlKey) {
         if (evt.code === 'KeyC') {

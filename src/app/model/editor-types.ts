@@ -1,5 +1,4 @@
 import React from 'react'
-import { DeepPartial } from '@/shared/utils/types/types'
 import { ILexTheme } from './lex/lexTheme.model'
 import { LanguageName } from './languages/map'
 
@@ -13,10 +12,10 @@ export const defaultEditorTextTheme: ILexTheme = {
 }
 
 interface ITheme {
-  main: Partial<{
+  main?: {
     primary: string
     secondary: string
-  }>
+  }
   editorText?: ILexTheme
   language: LanguageName
 }

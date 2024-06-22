@@ -288,32 +288,57 @@ export default function getEditorStoreSetters(
         for (let symbolIndex = 0; symbolIndex < line.length; symbolIndex++) {
           const symbol = line[symbolIndex]
           range.finish = symbolIndex
-          currentText += symbol.value
-
-          if (currentTokens) {
-            if (currentText.match(currentTokens[0])) {
-              for (const token of currentTokens.slice(1)) {
-                const tkn = token as keyof ILexTheme
-                if (isTokenArray(tkn)) {
-                  //@ts-expect-error
-                  const tknArr = langConf[tkn] as string[]
-
-                  if (!tknArr?.includes(currentText)) continue
-
-                  paintSymbols(range, theme[tkn])
-                } else {
-                  paintSymbols(range, theme[tkn])
-                }
-              }
-              currentText = ''
-            }
-            currentTokens = null
+          let clearText = false
+          if (symbol.value !== ' ') {
+            currentText += symbol.value
+          } else {
+            clearText = true
           }
 
           for (const token of langConf.tokenizer) {
-            if (currentText.match(token[0])) {
+            if (currentText.match(token[0])?.includes(currentText)) {
               currentTokens = token
             }
+          }
+
+          if (currentTokens) {
+            let color: string | undefined
+
+            for (const token of currentTokens.slice(1)) {
+              if (color) break
+
+              const tkn = token as keyof ILexTheme
+
+              if (isTokenArray(tkn)) {
+                //@ts-ignore
+                const tknArr = langConf[tkn] as string[]
+
+                if (tknArr?.includes(currentText)) color = theme[tkn]
+                continue
+              }
+
+              color = theme[tkn]
+              paintSymbols(range, color)
+
+              currentTokens = null
+
+              if (tkn === currentTokens?.[1]) {
+                currentText = ''
+                range.start = range.finish
+              }
+
+              break
+            }
+
+            if (color) {
+              paintSymbols(range, color)
+              currentTokens = null
+            }
+          }
+
+          if (clearText) {
+            currentText = ''
+            range.start = range.finish
           }
         }
 
