@@ -34,7 +34,9 @@ export class SelectionEvents implements EventBase {
   }
 
   private updateSelection(evt: MouseEvent) {
-    if (!this.isSelecting) return
+    if (!this.isSelecting || (evt.target as HTMLElement).id === 'carriage')
+      return
+
     const coords = getCoords(evt.target as HTMLElement)
 
     this.editorStore.changeSelectionRange({

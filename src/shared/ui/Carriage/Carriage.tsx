@@ -9,6 +9,7 @@ const CARRIAGE_WIDTH_COEFFICIENT = 0.092
 export const Carriage = ({ fontSize, top, left }: CarriageProps) => {
   return (
     <div
+      id="carriage"
       style={{
         height: fontSize,
         width: fontSize * CARRIAGE_WIDTH_COEFFICIENT,

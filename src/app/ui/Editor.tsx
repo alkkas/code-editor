@@ -15,7 +15,6 @@ export default function Editor(props: EditorProps) {
   const editorStore = useEditorStore()
 
   const [carriageCoords, setCarriageCoords] = useState({ x: 0, y: 0 })
-
   const updateCarriageCoords = () => {
     const { index, indexInLine } = editorStore.getCurrent()
     const initialCoords = { x: 0, y: 0 }
