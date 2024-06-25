@@ -1,6 +1,6 @@
-interface SymolProps<T extends any> {
+interface SymolProps {
   symbol_idx: number
-  attrs: Record<string, T>
+  attrs: Record<string, any>
 }
 
 export const Symbol = (props: SymbolProps) => {
