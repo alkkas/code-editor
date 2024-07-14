@@ -11,13 +11,18 @@ interface LineProps {
 }
 
 const areLineInRange = (lineProps: LineProps) => {
-  const editorStore = useEditorStore()
-  const range = editorStore.getSelectionRange()
-  if (
-    lineProps.index >= range.start.lineIndex &&
-    lineProps.index <= range.finish.lineIndex
-  ) {
-    return true
+  const editorStore = useEditorStore.getState()
+  try {
+    const range = editorStore.getSelectionRange()
+
+    if (
+      lineProps.index >= range.start.lineIndex &&
+      lineProps.index <= range.finish.lineIndex
+    ) {
+      return true
+    }
+  } catch (e) {
+    return false
   }
 }
 

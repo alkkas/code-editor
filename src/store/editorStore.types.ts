@@ -1,6 +1,6 @@
 import { IEditorStoreGetters } from './editorStore.getters'
 import { IEditorStoreData } from './editorStore.initial'
-import { IEditorStoreSetters } from './editorStore.setters'
+import { IEditorStoreSetters } from './setters/editorStore.setters'
 
 export interface ISymbol {
   value: string

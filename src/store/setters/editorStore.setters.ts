@@ -1,53 +1,15 @@
-import { WritableDraft } from '@/shared/utils/types/types'
-import { IEditorStore, IPosition, ISymbol, IRange } from './editorStore.types'
-import { LanguageName, languagesMap } from '@/app/model/languages/map'
-import { ILexTheme } from '@/app/model/lex/lexTheme.model'
-import { Itoken } from '@/app/model/lex/lex.model'
-import { defaultEditorTextTheme } from '@/app/model/editor-types'
-
-// TODO: implement later
-
-// type IAdditionalSetters = Record<string, (...args: unknown[]) => unknown>
-
-// function mapAdditonalSetters(
-//   additionalSetters: IAdditionalSetters,
-//   set: IZustandSet
-// ) {
-//   return Object.entries(additionalSetters).reduce<IAdditionalSetters>(
-//     (acc, [key, value]) => {
-//       acc[key] = (...args: unknown[]) => set((state) => value(...args, state))
-//     },
-//     {}
-//   )
-// }
-
-// const additionalEditorSetters: IAdditionalSetters = {
-// deleteLine: (index: number, state: WritableDraft<IEditorStore>) => {
-//   state.lines = [
-//     ...state.lines.slice(0, index),
-//     ...state.lines.slice(index + 1, state.lines.length),
-//   ]
-// },
-// }
-
-const _deleteLine = (index: number, state: WritableDraft<IEditorStore>) => {
-  state.lines = [
-    ...state.lines.slice(0, index),
-    ...state.lines.slice(index + 1, state.lines.length),
-  ]
-}
+import { IEditorStore, IPosition, ISymbol, IRange } from '../editorStore.types'
+import { SetType, commonSetters } from './commonSetters'
+import { mapCommonSetters } from './commonSetters'
+import getSyntaxHighlighter from './syntaxHighlighter'
 
 export default function getEditorStoreSetters(
   get: () => IEditorStore,
-  set: (
-    nextStateOrUpdater:
-      | IEditorStore
-      | Partial<IEditorStore>
-      | ((state: WritableDraft<IEditorStore>) => void),
-    shouldReplace?: boolean | undefined
-  ) => void
+  set: SetType
 ) {
   return {
+    ...mapCommonSetters(commonSetters, set),
+
     setFocus: (value: boolean) =>
       set((state) => {
         state.isFocused = value
@@ -176,10 +138,6 @@ export default function getEditorStoreSetters(
       })
     },
 
-    deleteLine(index: number) {
-      set((state) => _deleteLine(index, state))
-    },
-
     copyToClipboard(range: IRange) {
       const text = get().getText(range)
       navigator.clipboard.writeText(text)
@@ -235,7 +193,7 @@ export default function getEditorStoreSetters(
 
         set((state) => {
           if (state.lines.length !== 1) {
-            _deleteLine(index, state)
+            commonSetters.deleteLine(index, state)
             state.currentCarriagePos.lineIndex--
           } else {
             state.lines = [[]]
@@ -249,104 +207,7 @@ export default function getEditorStoreSetters(
       language: LanguageName,
       theme: ILexTheme = defaultEditorTextTheme
     ) {
-      interface IOneLineRange {
-        lineIndex: number
-        start: number
-        finish: number
-      }
-
-      const isTokenArray = (token: keyof ILexTheme) => {
-        return token[0] === '$'
-      }
-
-      const langConf = languagesMap[language]
-
-      let currentTokens: Itoken<typeof theme> | null = null
-
-      let currentText = ''
-
-      const range: IOneLineRange = {
-        lineIndex: 0,
-        start: 0,
-        finish: 0,
-      }
-
-      const paintSymbols = (range: IOneLineRange, color: string) => {
-        set((state) => {
-          state.lines[range.lineIndex].forEach((symbol, index) => {
-            if (index >= range.start && index <= range.finish) {
-              symbol.color = color
-            }
-          })
-        })
-      }
-
-      for (let lineIndex = 0; lineIndex < get().lines.length; lineIndex++) {
-        const line = get().lines[lineIndex]
-        range.lineIndex = lineIndex
-
-        for (let symbolIndex = 0; symbolIndex < line.length; symbolIndex++) {
-          const symbol = line[symbolIndex]
-          range.finish = symbolIndex
-          let clearText = false
-          if (symbol.value !== ' ') {
-            currentText += symbol.value
-          } else {
-            clearText = true
-          }
-
-          for (const token of langConf.tokenizer) {
-            if (currentText.match(token[0])?.includes(currentText)) {
-              currentTokens = token
-            }
-          }
-
-          if (currentTokens) {
-            let color: string | undefined
-
-            for (const token of currentTokens.slice(1)) {
-              if (color) break
-
-              const tkn = token as keyof ILexTheme
-
-              if (isTokenArray(tkn)) {
-                //@ts-ignore
-                const tknArr = langConf[tkn] as string[]
-
-                if (tknArr?.includes(currentText)) color = theme[tkn]
-                continue
-              }
-
-              color = theme[tkn]
-              paintSymbols(range, color)
-
-              currentTokens = null
-
-              if (tkn === currentTokens?.[1]) {
-                currentText = ''
-                range.start = range.finish
-              }
-
-              break
-            }
-
-            if (color) {
-              paintSymbols(range, color)
-              currentTokens = null
-            }
-          }
-
-          if (clearText) {
-            currentText = ''
-            range.start = range.finish
-          }
-        }
-
-        currentText = ''
-        currentTokens = null
-        range.start = 0
-        range.finish = 0
-      }
+      const abc = getSyntaxHighlighter(get, set)
     },
   }
 }
