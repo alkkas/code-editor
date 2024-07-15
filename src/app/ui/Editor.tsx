@@ -54,7 +54,7 @@ export default function Editor(props: EditorProps) {
   useLayoutEffect(() => {
     //TODO: run this in worker
     updateCarriageCoords()
-    editorStore.highLightSyntax(props.theme.language, props.theme.editorText)
+    editorStore.highlightSyntax(props.theme.language, props.theme.editorText)
   }, [editorStore.getCurrentLineIndex(), editorStore.getCurrentIndexInLine()])
 
   useLayoutEffect(() => {

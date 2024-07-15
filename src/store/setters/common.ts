@@ -8,7 +8,7 @@ type ICommonSetters<T> = {
     : never
 }
 
-type CommonSettersObj = {
+export type CommonSettersObj = {
   deleteLine: (index: number) => void
 }
 

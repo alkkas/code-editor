@@ -1,6 +1,6 @@
 import { IEditorStoreGetters } from './editorStore.getters'
 import { IEditorStoreData } from './editorStore.initial'
-import { IEditorStoreSetters } from './setters/editorStore.setters'
+import { IEditorStoreSetters } from './setters/index-editor.setters'
 
 export interface ISymbol {
   value: string
@@ -19,6 +19,6 @@ export interface IFullRange {
 }
 export type IRange = Partial<IFullRange>
 
-export type IEditorStore = IEditorStoreSetters &
-  IEditorStoreGetters &
-  IEditorStoreData
+export type IEditorStore = IEditorStoreGetters &
+  IEditorStoreData &
+  IEditorStoreSetters

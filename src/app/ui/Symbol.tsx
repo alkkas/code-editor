@@ -17,7 +17,7 @@ const Symbol = (props: SymbolProps) => {
     if (!editorStore.isSelectionActive()) return symbolClassName
 
     const { start, finish } = editorStore.getSelectionRange()
-    //TODO: fix bugs
+
     if (
       lineIndex >= start.lineIndex &&
       lineIndex <= finish.lineIndex &&
