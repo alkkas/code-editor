@@ -1,7 +1,10 @@
+import { LanguageName } from '@/app/model/languages/map'
 import { IEditorStore, IPosition, ISymbol, IRange } from '../editorStore.types'
 import { SetType, commonSetters } from './commonSetters'
 import { mapCommonSetters } from './commonSetters'
 import getSyntaxHighlighter from './syntaxHighlighter'
+import { ILexTheme } from '@/app/model/lex/lexTheme.model'
+import { defaultEditorTextTheme } from '@/app/model/editor-types'
 
 export default function getEditorStoreSetters(
   get: () => IEditorStore,
@@ -207,7 +210,7 @@ export default function getEditorStoreSetters(
       language: LanguageName,
       theme: ILexTheme = defaultEditorTextTheme
     ) {
-      const abc = getSyntaxHighlighter(get, set)
+      return getSyntaxHighlighter(get, set)(language, theme)
     },
   }
 }
