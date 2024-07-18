@@ -25,8 +25,8 @@ export default function Editor(props: EditorProps) {
 
     if (!line) throw Error('Line not found')
 
-    //TODO: change this
-    initialCoords.y = (line.offsetTop ?? 0) + 9
+    initialCoords.y =
+      (line.offsetTop ?? 0) + (line.clientHeight / 2 - fontSize / 2)
     initialCoords.x = line.offsetLeft
 
     const symbols = document.querySelectorAll(
