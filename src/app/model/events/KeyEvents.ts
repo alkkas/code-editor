@@ -46,7 +46,7 @@ export class KeyEvents {
     editorStore.pasteText(text)
   }
 
-  private onKeyDown(evt: KeyboardEvent) {
+  private async onKeyDown(evt: KeyboardEvent) {
     evt.preventDefault()
     if (evt.key.length === 1) {
       if (evt.ctrlKey) {
@@ -54,6 +54,9 @@ export class KeyEvents {
           editorStore.copyToClipboard(editorStore.getSelectionRange())
         } else if (evt.code === 'KeyX') {
           editorStore.cut()
+        } else if (evt.code === 'KeyV') {
+          const text = await navigator.clipboard.readText()
+          editorStore.pasteText(text)
         }
         return
       }

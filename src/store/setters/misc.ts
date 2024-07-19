@@ -72,6 +72,7 @@ export const getMiscSetters = (
           ...state.lines.slice(state.currentCarriagePos.lineIndex + 1),
         ]
       })
+      get().highlightSyntax()
     },
 
     changeSelectionRange(range) {

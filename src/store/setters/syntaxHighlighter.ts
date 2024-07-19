@@ -1,7 +1,6 @@
 import { ILexTheme } from '@/app/model/lex/lexTheme.model'
 import { IEditorStore } from '../editorStore.types'
-import { LanguageName, languagesMap } from '@/app/model/languages/map'
-import { defaultEditorTextTheme } from '@/app/model/editor-types'
+import { languagesMap } from '@/app/model/languages/map'
 import { Itoken } from '@/app/model/lex/lex.model'
 import { SetType } from './common'
 
@@ -12,10 +11,7 @@ interface IOneLineRange {
 }
 
 export interface ISyntaxHighlighter {
-  highlightSyntax: (
-    language: LanguageName,
-    theme: ILexTheme | undefined
-  ) => void
+  highlightSyntax: () => void
 }
 
 const isTokenArray = (token: keyof ILexTheme) => {
@@ -36,9 +32,11 @@ export default function getSyntaxHighlighter(
     })
   }
   return {
-    highlightSyntax: (language, theme = defaultEditorTextTheme) => {
-      const langConf = languagesMap[language]
+    highlightSyntax: () => {
+      const language = get().highlighter.language
 
+      const langConf = languagesMap[language]
+      const theme = get().highlighter.editorText
       let currentTokens: Itoken<typeof theme> | null = null
 
       let currentText = ''
