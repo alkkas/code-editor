@@ -7,9 +7,7 @@ const editorStore = useEditorStore.getState()
 export class KeyEvents {
   wrapper: HTMLDivElement
 
-  private additionalEvents: Record<string, EventMap> = {
-    selection: new SelectionEvents().events,
-  }
+  private additionalEvents: Record<string, EventMap>
 
   getAdditionalEvents() {
     return Object.keys(this.additionalEvents).reduce<EventMap>((acc, curr) => {
@@ -19,15 +17,19 @@ export class KeyEvents {
     }, {})
   }
 
-  private events: EventMap = {
-    focus: this.onFocus.bind(this),
-    focusout: this.onFocusout.bind(this),
-    keydown: this.onKeyDown.bind(this),
-    ...this.getAdditionalEvents(),
-  }
+  private events: EventMap
 
   constructor(wrapper: HTMLDivElement) {
     this.wrapper = wrapper
+    this.additionalEvents = {
+      selection: new SelectionEvents(this.wrapper).events,
+    }
+    this.events = {
+      focus: this.onFocus.bind(this),
+      focusout: this.onFocusout.bind(this),
+      keydown: this.onKeyDown.bind(this),
+      ...this.getAdditionalEvents(),
+    }
   }
 
   private onFocus() {

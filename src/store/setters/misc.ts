@@ -7,8 +7,6 @@ export interface IMiscSetters {
   createNewLine: () => void
   copyToClipboard: (range: IRange) => void
   pasteText: (text: string) => void
-  changeSelectionRange: (range: Partial<IRange>) => void
-  clearSelectionRange: () => void
   cut: () => void
 }
 
@@ -71,30 +69,49 @@ export const getMiscSetters = (
           ...lines.slice(1),
           ...state.lines.slice(state.currentCarriagePos.lineIndex + 1),
         ]
+
+        if (lines.length === 1) {
+          state.currentCarriagePos.indexInLine += lines[0].length
+        } else if (lines.length > 1) {
+          state.currentCarriagePos.lineIndex += lines.length - 1
+          state.currentCarriagePos.indexInLine = lines.at(-1)?.length ?? 0
+        }
       })
+
+      get().clearSelectionRange()
       get().highlightSyntax()
-    },
-
-    changeSelectionRange(range) {
-      set((state) => {
-        if (range.start) {
-          state.selectionRange.start = range.start
-        }
-        if (range.finish) {
-          state.selectionRange.finish = range.finish
-        }
-      })
-    },
-
-    clearSelectionRange() {
-      set((state) => {
-        state.selectionRange = { start: undefined, finish: undefined }
-      })
     },
 
     cut() {
       if (get().isSelectionActive()) {
-        // selection
+        set((state) => {
+          const range = get().getSelectionRange()
+
+          const newLines = [...state.lines.slice(0, range.start.lineIndex)]
+
+          newLines[range.start.lineIndex] = [
+            ...state.lines[range.start.lineIndex].slice(
+              0,
+              range.start.indexInLine
+            ),
+          ]
+
+          newLines[range.start.lineIndex] = [
+            ...newLines[range.start.lineIndex],
+
+            ...state.lines[range.finish.lineIndex].slice(
+              range.finish.indexInLine + 1
+            ),
+          ]
+
+          newLines.push(...state.lines.slice(range.finish.lineIndex + 1))
+
+          state.lines = newLines
+
+          state.currentCarriagePos.lineIndex = range.start.lineIndex
+          state.currentCarriagePos.indexInLine = range.start.indexInLine
+        })
+        get().clearSelectionRange()
       } else {
         const { index, line } = get().getCurrent()
 

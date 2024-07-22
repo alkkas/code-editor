@@ -12,9 +12,9 @@ export const getSymbolSetters = (
 ): ISymbolSetters => {
   return {
     addNewSymbol(...newSymbols) {
-      const { indexInLine, line } = get().getCurrent()
-
       newSymbols.forEach((symbol) => {
+        const { indexInLine, line } = get().getCurrent()
+
         get().changeCurrentLine([
           ...line.slice(0, indexInLine),
           symbol,
@@ -25,6 +25,8 @@ export const getSymbolSetters = (
           state.currentCarriagePos.indexInLine++
         })
       })
+
+      get().clearSelectionRange()
     },
 
     deleteSymbol() {
