@@ -48,10 +48,14 @@
     "rollup-plugin-peer-deps-external": "^2.2.4",
     "rollup-plugin-postcss": "^4.0.2",
     "rollup-plugin-typescript2": "^0.36.0",
+    "rollup-plugin-web-worker-loader": "^1.6.1",
     "tailwindcss": "^3.4.1",
     "tslib": "^2.6.2",
     "tw-colors": "^3.3.1",
     "typescript": "^5.3.3",
     "zustand": "^4.5.2"
+  },
+  "dependencies": {
+    "rollup-plugin-worker": "^3.0.4"
   }
 }

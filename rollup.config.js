@@ -6,6 +6,8 @@ import postcss from 'rollup-plugin-postcss'
 import typescript from 'rollup-plugin-typescript2'
 import alias from '@rollup/plugin-alias'
 import commonjs from '@rollup/plugin-commonjs'
+import workerLoader from 'rollup-plugin-web-worker-loader'
+
 export default [
   {
     input: './src/index.ts',
@@ -26,6 +28,7 @@ export default [
     plugins: [
       resolve(),
       commonjs(),
+      workerLoader(),
       alias({
         entries: [{ find: '@/', replacement: './src' }],
       }),
@@ -39,11 +42,11 @@ export default [
           insertAt: 'top',
         },
       }),
-      // babel({
-      //   exclude: 'node_modules/**',
-      //   presets: ['@babel/preset-react'],
-      //   babelHelpers: 'bundled',
-      // }),
+      babel({
+        exclude: 'node_modules/**',
+        presets: ['@babel/preset-react'],
+        babelHelpers: 'bundled',
+      }),
       external({
         includeDependencies: true,
       }),

@@ -1,5 +1,7 @@
 import { IEditorStore } from '../editorStore.types'
-import getSyntaxHighlighter, { ISyntaxHighlighter } from './syntaxHighlighter'
+import getSyntaxHighlighter, {
+  ISyntaxHighlighter,
+} from './syntaxHighlighter/syntaxHighlighter'
 import { ICarriageSetters, getCarriageSetters } from './carriage'
 import {
   CommonSettersObj,
