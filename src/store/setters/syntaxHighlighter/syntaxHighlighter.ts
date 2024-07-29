@@ -1,6 +1,5 @@
 import { IEditorStore, ISymbol } from '../../editorStore.types'
 import { SetType } from '../common'
-import { ISyntaxHighlighterMessage } from './syntaxHighlighter.worker'
 import SyntaxHighlightWorker from 'web-worker:./syntaxHighlighter.worker.ts'
 
 export interface ISyntaxHighlighter {
@@ -23,12 +22,7 @@ export default function getSyntaxHighlighter(
 
   return {
     highlightSyntax: () => {
-      const language = get().highlighter.language
-      const theme = get().highlighter.editorText
-      const workerMsg: ISyntaxHighlighterMessage = {
-        params: [language, theme],
-        store: JSON.parse(JSON.stringify(get())),
-      }
+      const workerMsg = JSON.parse(JSON.stringify(get()))
       worker.postMessage(workerMsg)
     },
   }

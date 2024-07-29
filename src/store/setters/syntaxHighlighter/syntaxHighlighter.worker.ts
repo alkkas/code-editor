@@ -1,5 +1,5 @@
 import { defaultEditorTextTheme } from '@/app/model/editor-types'
-import { LanguageName, languagesMap } from '@/app/model/languages/map'
+import { languagesMap } from '@/app/model/languages/map'
 import { Itoken } from '@/app/model/lex/lex.model'
 import { ILexTheme } from '@/app/model/lex/lexTheme.model'
 import { IEditorStoreData } from '@/store/editorStore.initial'
@@ -8,11 +8,6 @@ interface IOneLineRange {
   lineIndex: number
   start: number
   finish: number
-}
-
-export interface ISyntaxHighlighterMessage {
-  store: IEditorStoreData
-  params: [LanguageName, ILexTheme | undefined]
 }
 
 const paintSymbols = (
@@ -31,10 +26,10 @@ const isTokenArray = (token: keyof ILexTheme) => {
   return token[0] === '$'
 }
 
-self.onmessage = (e: MessageEvent<ISyntaxHighlighterMessage>) => {
-  const store = e.data.store
-  const language = e.data.params[0]
-  let theme = e.data.params[1]
+self.onmessage = (e: MessageEvent<IEditorStoreData>) => {
+  const store = e.data
+  const language = e.data.highlighter.language
+  let theme = e.data.highlighter.editorText
 
   if (!theme) theme = defaultEditorTextTheme
   const langConf = languagesMap[language]
