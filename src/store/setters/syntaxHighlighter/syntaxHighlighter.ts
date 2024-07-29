@@ -1,16 +1,10 @@
-import { ILexTheme } from '@/app/model/lex/lexTheme.model'
 import { IEditorStore, ISymbol } from '../../editorStore.types'
-import { LanguageName } from '@/app/model/languages/map'
-import { defaultEditorTextTheme } from '@/app/model/editor-types'
 import { SetType } from '../common'
 import { ISyntaxHighlighterMessage } from './syntaxHighlighter.worker'
 import SyntaxHighlightWorker from 'web-worker:./syntaxHighlighter.worker.ts'
 
 export interface ISyntaxHighlighter {
-  highlightSyntax: (
-    language: LanguageName,
-    theme: ILexTheme | undefined
-  ) => void
+  highlightSyntax: () => void
 }
 
 export default function getSyntaxHighlighter(
@@ -28,7 +22,9 @@ export default function getSyntaxHighlighter(
   }
 
   return {
-    highlightSyntax: (language, theme = defaultEditorTextTheme) => {
+    highlightSyntax: () => {
+      const language = get().highlighter.language
+      const theme = get().highlighter.editorText
       const workerMsg: ISyntaxHighlighterMessage = {
         params: [language, theme],
         store: JSON.parse(JSON.stringify(get())),

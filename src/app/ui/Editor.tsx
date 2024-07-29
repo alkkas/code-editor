@@ -52,8 +52,15 @@ export default function Editor(props: EditorProps) {
   }
 
   useLayoutEffect(() => {
+    editorStore.highlighter.language = props.theme.language
+
+    if (props.theme.editorText)
+      editorStore.highlighter.editorText = props.theme.editorText
+  }, [props.theme.language, props.theme.editorText])
+
+  useLayoutEffect(() => {
     updateCarriageCoords()
-    editorStore.highlightSyntax(props.theme.language, props.theme.editorText)
+    editorStore.highlightSyntax()
   }, [editorStore.getCurrentLineIndex(), editorStore.getCurrentIndexInLine()])
 
   useLayoutEffect(() => {

@@ -5,6 +5,13 @@ import { defaultEditorTextTheme } from '@/app/model/editor-types'
 
 export default function getEditorStoreInitialState() {
   return {
+    highlighter: {
+      language: 'typescript',
+      editorText: defaultEditorTextTheme,
+    } as {
+      editorText: ILexTheme
+      language: LanguageName
+    },
     buffer: [[]] as ISymbol[][],
     currentCarriagePos: { lineIndex: 0, indexInLine: 0 } as IPosition,
     isFocused: false,

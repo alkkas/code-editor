@@ -6,12 +6,14 @@ import { useEditorStore } from '@/store/editorStore'
 export class SelectionEvents implements EventBase {
   events: EventMap = {
     mousedown: this.startSelection.bind(this),
-    mousemove: this.updateSelection.bind(this),
     mouseup: this.endSelection.bind(this),
   }
 
+  private mouseMoveEvent = this.updateSelection.bind(this)
+
+  constructor(private element: HTMLElement) {}
+
   editorStore = useEditorStore.getState()
-  isSelecting = false
 
   private startSelection(evt: MouseEvent) {
     this.editorStore.clearSelectionRange()
@@ -30,20 +32,36 @@ export class SelectionEvents implements EventBase {
     })
 
     this.editorStore.setFocus(true)
-    this.isSelecting = true
+    this.element.addEventListener('mousemove', this.mouseMoveEvent)
   }
 
   private updateSelection(evt: MouseEvent) {
-    if (!this.isSelecting || (evt.target as HTMLElement).id === 'carriage')
-      return
+    if ((evt.target as HTMLElement).id === 'carriage') return
 
     const coords = getCoords(evt.target as HTMLElement)
 
+    const finish = {
+      indexInLine: coords.indexInLine !== 0 ? coords.indexInLine - 1 : 0,
+      lineIndex: coords.lineIndex,
+    }
+    const startLineIndex = Number(
+      this.editorStore.selectionRange.start?.lineIndex
+    )
+    const startIndexInLine = Number(
+      this.editorStore.selectionRange.start?.indexInLine
+    )
+
+    if (
+      finish.lineIndex < startLineIndex ||
+      (finish.lineIndex === startLineIndex &&
+        finish.indexInLine <= startIndexInLine)
+    ) {
+      finish.indexInLine =
+        finish.indexInLine - 1 < 0 ? 0 : finish.indexInLine - 1
+    }
+
     this.editorStore.changeSelectionRange({
-      finish: {
-        indexInLine: coords.indexInLine !== 0 ? coords.indexInLine - 1 : 0,
-        lineIndex: coords.lineIndex,
-      },
+      finish,
     })
 
     this.editorStore.setCarriagePos({
@@ -53,6 +71,6 @@ export class SelectionEvents implements EventBase {
   }
 
   private endSelection() {
-    this.isSelecting = false
+    this.element.removeEventListener('mousemove', this.mouseMoveEvent)
   }
 }

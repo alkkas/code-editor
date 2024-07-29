@@ -25,6 +25,8 @@ export const getSymbolSetters = (
           state.currentCarriagePos.indexInLine++
         })
       })
+
+      get().clearSelectionRange()
     },
 
     deleteSymbol() {

@@ -129,8 +129,8 @@ export const tsConfiguration: LexModel<ILexTheme> = {
     '@',
   ],
   tokenizer: [
-    [/#?[a-z_$][\w$]*/, '$keywords', 'variables'],
-    [/'.*'/, 'string'],
-    [/\/\/.*$/, 'comments'],
+    [/#?[a-z_$][\w$]*/g, '$keywords', 'variables'],
+    [/'.*'/g, 'string'],
+    [/\/\/.*$/g, 'comments'],
   ],
 }

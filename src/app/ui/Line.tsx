@@ -57,4 +57,4 @@ const Line = (props: LineProps) => {
   )
 }
 
-export default memo(Line, areLinesEqual)
+export default Line

@@ -7,9 +7,7 @@ const editorStore = useEditorStore.getState()
 export class KeyEvents {
   wrapper: HTMLDivElement
 
-  private additionalEvents: Record<string, EventMap> = {
-    selection: new SelectionEvents().events,
-  }
+  private additionalEvents: Record<string, EventMap>
 
   getAdditionalEvents() {
     return Object.keys(this.additionalEvents).reduce<EventMap>((acc, curr) => {
@@ -19,15 +17,19 @@ export class KeyEvents {
     }, {})
   }
 
-  private events: EventMap = {
-    focus: this.onFocus.bind(this),
-    focusout: this.onFocusout.bind(this),
-    keydown: this.onKeyDown.bind(this),
-    ...this.getAdditionalEvents(),
-  }
+  private events: EventMap
 
   constructor(wrapper: HTMLDivElement) {
     this.wrapper = wrapper
+    this.additionalEvents = {
+      selection: new SelectionEvents(this.wrapper).events,
+    }
+    this.events = {
+      focus: this.onFocus.bind(this),
+      focusout: this.onFocusout.bind(this),
+      keydown: this.onKeyDown.bind(this),
+      ...this.getAdditionalEvents(),
+    }
   }
 
   private onFocus() {
@@ -46,7 +48,7 @@ export class KeyEvents {
     editorStore.pasteText(text)
   }
 
-  private onKeyDown(evt: KeyboardEvent) {
+  private async onKeyDown(evt: KeyboardEvent) {
     evt.preventDefault()
     if (evt.key.length === 1) {
       if (evt.ctrlKey) {
@@ -54,6 +56,9 @@ export class KeyEvents {
           editorStore.copyToClipboard(editorStore.getSelectionRange())
         } else if (evt.code === 'KeyX') {
           editorStore.cut()
+        } else if (evt.code === 'KeyV') {
+          const text = await navigator.clipboard.readText()
+          editorStore.pasteText(text)
         }
         return
       }

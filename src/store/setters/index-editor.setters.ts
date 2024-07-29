@@ -11,6 +11,7 @@ import {
 } from './common'
 import { ISymbolSetters, getSymbolSetters } from './symbol'
 import { IMiscSetters, getMiscSetters } from './misc'
+import { ISelectionSetters, getSelectionSetters } from './selection'
 
 export default function getEditorStoreSetters(
   get: () => IEditorStore,
@@ -26,6 +27,8 @@ export default function getEditorStoreSetters(
     ...getMiscSetters(get, set),
 
     ...getSyntaxHighlighter(get, set),
+
+    ...getSelectionSetters(get, set),
   }
 }
 
@@ -35,4 +38,5 @@ export type IEditorStoreSetters = CommonSettersObj &
   ICarriageSetters &
   ISyntaxHighlighter &
   IMiscSetters &
-  ISymbolSetters
+  ISymbolSetters &
+  ISelectionSetters

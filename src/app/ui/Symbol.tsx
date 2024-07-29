@@ -13,8 +13,7 @@ const Symbol = (props: SymbolProps) => {
 
   const symbolBorder = (lineIndex: number, symbolIndex: number) => {
     let symbolClassName = ''
-
-    if (!editorStore.isSelectionActive()) return symbolClassName
+    if (!editorStore.isSelectionActive()) return ''
 
     const { start, finish } = editorStore.getSelectionRange()
 
