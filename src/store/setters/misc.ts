@@ -8,6 +8,7 @@ export interface IMiscSetters {
   copyToClipboard: (range: IRange) => void
   pasteText: (text: string) => void
   cut: () => void
+  removeSelectedText: () => void
 }
 
 export const getMiscSetters = (
@@ -82,36 +83,42 @@ export const getMiscSetters = (
       get().highlightSyntax()
     },
 
+    removeSelectedText() {
+      set((state) => {
+        const range = get().getSelectionRange()
+
+        const newLines = [...state.lines.slice(0, range.start.lineIndex)]
+
+        newLines[range.start.lineIndex] = [
+          ...state.lines[range.start.lineIndex].slice(
+            0,
+            range.start.indexInLine
+          ),
+        ]
+
+        newLines[range.start.lineIndex] = [
+          ...newLines[range.start.lineIndex],
+
+          ...state.lines[range.finish.lineIndex].slice(
+            range.finish.indexInLine + 1
+          ),
+        ]
+
+        newLines.push(...state.lines.slice(range.finish.lineIndex + 1))
+
+        state.lines = newLines
+
+        state.currentCarriagePos.lineIndex = range.start.lineIndex
+        state.currentCarriagePos.indexInLine = range.start.indexInLine
+      })
+
+      get().clearSelectionRange()
+    },
+
+
     cut() {
       if (get().isSelectionActive()) {
-        set((state) => {
-          const range = get().getSelectionRange()
-
-          const newLines = [...state.lines.slice(0, range.start.lineIndex)]
-
-          newLines[range.start.lineIndex] = [
-            ...state.lines[range.start.lineIndex].slice(
-              0,
-              range.start.indexInLine
-            ),
-          ]
-
-          newLines[range.start.lineIndex] = [
-            ...newLines[range.start.lineIndex],
-
-            ...state.lines[range.finish.lineIndex].slice(
-              range.finish.indexInLine + 1
-            ),
-          ]
-
-          newLines.push(...state.lines.slice(range.finish.lineIndex + 1))
-
-          state.lines = newLines
-
-          state.currentCarriagePos.lineIndex = range.start.lineIndex
-          state.currentCarriagePos.indexInLine = range.start.indexInLine
-        })
-        get().clearSelectionRange()
+        get().removeSelectedText()
       } else {
         const { index, line } = get().getCurrent()
 

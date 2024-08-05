@@ -1,14 +1,16 @@
 import { useEditorStore } from '@/store/editorStore'
 import { lineAttr, symbolAttr } from '@/shared/utils/lib/elements.const'
+import { IPosition } from '@/store/editorStore.types'
 
 export const lineElement = (index?: number) => {
   const lineIndex = index !== undefined ? `="${index}"` : ''
   return `div[${lineAttr}${lineIndex}]` as const
 }
 
-export const symbolElement = (index?: number) => {
-  const symbolIndex = index !== undefined ? `="${index}"` : ''
-  return `span[${symbolAttr}${symbolIndex}]` as const
+export const symbolElement = (coords?: IPosition) => {
+  const lineIndex = coords !== undefined ? `="${coords.lineIndex}"` : ''
+  const symbolIndex = coords !== undefined ? `="${coords.indexInLine}"` : ''
+  return `span[${symbolAttr}${symbolIndex}][${lineAttr}${lineIndex}]` as const
 }
 
 export const getClosestLine = (target: HTMLElement) => {

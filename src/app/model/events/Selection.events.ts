@@ -1,7 +1,13 @@
 import { EventMap } from '@/shared/utils/types/types'
-import { getCoords } from '../../lib/getElements.helpers'
+import {
+  getCoords,
+  lineElement,
+  symbolElement,
+} from '../../lib/getElements.helpers'
 import { EventBase } from './Event.base'
 import { useEditorStore } from '@/store/editorStore'
+import { IPosition } from '@/store/editorStore.types'
+import { DEFAULT_FONT_SIZE } from '@/app/ui/Editor'
 
 export class SelectionEvents implements EventBase {
   events: EventMap = {
@@ -13,60 +19,96 @@ export class SelectionEvents implements EventBase {
 
   constructor(private element: HTMLElement) {}
 
-  editorStore = useEditorStore.getState()
-
   private startSelection(evt: MouseEvent) {
-    this.editorStore.clearSelectionRange()
+    const editorStore = useEditorStore.getState()
+
+    editorStore.clearSelectionRange()
 
     if (!evt.target) return
 
     const coords = getCoords(evt.target as HTMLElement)
 
-    this.editorStore.changeSelectionRange({
+    editorStore.changeSelectionRange({
       start: { indexInLine: coords.indexInLine, lineIndex: coords.lineIndex },
     })
 
-    this.editorStore.setCarriagePos({
+    editorStore.setCarriagePos({
       lineIndex: coords.lineIndex,
       indexInLine: coords.indexInLine,
     })
 
-    this.editorStore.setFocus(true)
+    editorStore.setFocus(true)
     this.element.addEventListener('mousemove', this.mouseMoveEvent)
   }
 
   private updateSelection(evt: MouseEvent) {
-    if ((evt.target as HTMLElement).id === 'carriage') return
+    const editorStore = useEditorStore.getState()
+    const mouseCoords = { x: evt.x, y: evt.y }
 
-    const coords = getCoords(evt.target as HTMLElement)
+    if (!editorStore.selectionRange.start) return
 
-    const finish = {
-      indexInLine: coords.indexInLine !== 0 ? coords.indexInLine - 1 : 0,
-      lineIndex: coords.lineIndex,
-    }
-    const startLineIndex = Number(
-      this.editorStore.selectionRange.start?.lineIndex
-    )
-    const startIndexInLine = Number(
-      this.editorStore.selectionRange.start?.indexInLine
-    )
-
-    if (
-      finish.lineIndex < startLineIndex ||
-      (finish.lineIndex === startLineIndex &&
-        finish.indexInLine <= startIndexInLine)
-    ) {
-      finish.indexInLine =
-        finish.indexInLine - 1 < 0 ? 0 : finish.indexInLine - 1
+    const carriageCoords: IPosition = {
+      lineIndex: editorStore.selectionRange.start.lineIndex,
+      indexInLine: editorStore.selectionRange.start.indexInLine,
     }
 
-    this.editorStore.changeSelectionRange({
-      finish,
+    for (let lineIndex = 0; lineIndex < editorStore.lines.length; lineIndex++) {
+      const lineDom = document.querySelector(
+        lineElement(lineIndex)
+      ) as HTMLElement | null
+
+      if (!lineDom) throw Error('line not found')
+
+      const lineY = lineDom.getBoundingClientRect().y
+
+      const isCursorBetweenLine =
+        (mouseCoords.y > lineY && mouseCoords.y < lineY + DEFAULT_FONT_SIZE) ||
+        lineY > mouseCoords.y
+
+      if (!isCursorBetweenLine && lineIndex !== editorStore.lines.length - 1)
+        continue
+
+      carriageCoords.lineIndex = lineIndex
+
+      const currentLine = editorStore.lines[lineIndex]
+
+      if (!currentLine.length) carriageCoords.indexInLine = 0
+
+      for (
+        let indexInLine = 0;
+        indexInLine < currentLine.length;
+        indexInLine++
+      ) {
+        const symbolDom = document.querySelector(
+          symbolElement({ lineIndex, indexInLine })
+        ) as HTMLElement | null
+
+        if (!symbolDom) throw Error('symbol not found')
+
+        const symbolX = symbolDom.getBoundingClientRect().x
+
+        if (symbolX < mouseCoords.x && indexInLine !== currentLine.length - 1)
+          continue
+
+        carriageCoords.indexInLine = indexInLine
+
+        if (indexInLine === currentLine.length - 1) {
+          carriageCoords.indexInLine++
+        }
+
+        break
+      }
+
+      break
+    }
+    console.log(carriageCoords)
+    editorStore.changeSelectionRange({
+      finish: carriageCoords,
     })
 
-    this.editorStore.setCarriagePos({
-      lineIndex: coords.lineIndex,
-      indexInLine: coords.indexInLine,
+    editorStore.setCarriagePos({
+      lineIndex: carriageCoords.lineIndex,
+      indexInLine: carriageCoords.indexInLine,
     })
   }
 

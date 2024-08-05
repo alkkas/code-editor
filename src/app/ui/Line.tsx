@@ -49,7 +49,7 @@ const Line = (props: LineProps) => {
             lineIdx={props.index}
             symbol={symbol}
             symbolIdx={symbolIdx}
-            key={symbolIdx + symbol.value}
+            key={`${props.index}-${symbolIdx}`}
           />
         ))}
       </div>

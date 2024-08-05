@@ -33,7 +33,7 @@ export default function getEditorStoreSetters(
 }
 
 // Explicit store setters type declaration.
-// When declared with inferring dependency cycle error is thrown
+// When declared with "ts type inferring" dependency cycle error is thrown
 export type IEditorStoreSetters = CommonSettersObj &
   ICarriageSetters &
   ISyntaxHighlighter &

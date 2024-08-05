@@ -26,7 +26,7 @@ export default function getEditorStoreGetters(get: () => IEditorStore) {
         const startTemp = vStart
         const finishTemp = vFinish
 
-        vStart = { ...finishTemp, indexInLine: finishTemp.indexInLine + 1 }
+        vStart = { ...finishTemp, indexInLine: finishTemp.indexInLine }
         vFinish = startTemp
       }
 

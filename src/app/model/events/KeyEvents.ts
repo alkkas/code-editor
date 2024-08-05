@@ -7,17 +7,9 @@ const editorStore = useEditorStore.getState()
 export class KeyEvents {
   wrapper: HTMLDivElement
 
-  private additionalEvents: Record<string, EventMap>
+  private readonly additionalEvents: Record<string, EventMap>
 
-  getAdditionalEvents() {
-    return Object.keys(this.additionalEvents).reduce<EventMap>((acc, curr) => {
-      const events = this.additionalEvents[curr]
-      acc = Object.assign(acc, events)
-      return acc
-    }, {})
-  }
-
-  private events: EventMap
+  private readonly events: EventMap
 
   constructor(wrapper: HTMLDivElement) {
     this.wrapper = wrapper
@@ -30,6 +22,14 @@ export class KeyEvents {
       keydown: this.onKeyDown.bind(this),
       ...this.getAdditionalEvents(),
     }
+  }
+
+  getAdditionalEvents() {
+    return Object.keys(this.additionalEvents).reduce<EventMap>((acc, curr) => {
+      const events = this.additionalEvents[curr]
+      acc = Object.assign(acc, events)
+      return acc
+    }, {})
   }
 
   private onFocus() {

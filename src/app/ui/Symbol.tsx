@@ -1,4 +1,4 @@
-import { symbolAttr } from '@/shared/utils/lib/elements.const'
+import { lineAttr, symbolAttr } from '@/shared/utils/lib/elements.const'
 import { useEditorStore } from '@/store/editorStore'
 import { ISymbol } from '@/store/editorStore.types'
 
@@ -51,7 +51,7 @@ const Symbol = (props: SymbolProps) => {
   return (
     <span
       key={props.symbolIdx}
-      {...{ [symbolAttr]: props.symbolIdx }}
+      {...{ [symbolAttr]: props.symbolIdx, [lineAttr]: props.lineIdx }}
       style={{ color: props.symbol.color ?? 'black' }}
       className={symbolBorder(props.lineIdx, props.symbolIdx)}
     >

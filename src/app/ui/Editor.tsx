@@ -7,7 +7,7 @@ import Line from './Line'
 import { lineElement, symbolElement } from '../lib/getElements.helpers'
 import '../index.css'
 
-const DEFAULT_FONT_SIZE = 16
+export const DEFAULT_FONT_SIZE = 16
 
 export default function Editor(props: EditorProps) {
   const wrapper = useRef<HTMLDivElement>(null)
@@ -89,10 +89,6 @@ export default function Editor(props: EditorProps) {
         />
       )}
       <div className="relative">
-        {/* 
-          put nothing else here except of lines 
-          because foreign elements will cause wrong selection
-        */}
         {editorStore.lines.map((line, line_idx) => (
           <Line line={line} index={line_idx} key={line_idx} />
         ))}
