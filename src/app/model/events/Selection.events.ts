@@ -101,7 +101,7 @@ export class SelectionEvents implements EventBase {
 
       break
     }
-    console.log(carriageCoords)
+
     editorStore.changeSelectionRange({
       finish: carriageCoords,
     })
