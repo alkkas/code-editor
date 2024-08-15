@@ -8,6 +8,16 @@ interface SymbolProps {
   symbol: ISymbol
 }
 
+const valuesMapper: Record<string, JSX.Element> = {
+  ' ': <>&nbsp;</>,
+}
+
+const getValueComponent = (value: string): JSX.Element => {
+  const resolvedValue = valuesMapper[value]
+  if (resolvedValue !== undefined) return resolvedValue
+  return <>{value}</>
+}
+
 const Symbol = (props: SymbolProps) => {
   const editorStore = useEditorStore()
 
@@ -17,7 +27,7 @@ const Symbol = (props: SymbolProps) => {
 
     const { start, finish } = editorStore.getSelectionRange()
 
-    if (
+    const symbolInRange =
       lineIndex >= start.lineIndex &&
       lineIndex <= finish.lineIndex &&
       (lineIndex === start.lineIndex
@@ -26,21 +36,24 @@ const Symbol = (props: SymbolProps) => {
       (lineIndex === finish.lineIndex
         ? symbolIndex <= finish.indexInLine
         : true)
-    ) {
+
+    if (symbolInRange) {
       symbolClassName += 'bg-slate-400'
 
-      if (
+      const selectionStartWithCurrentSymbol =
         (lineIndex === start.lineIndex && symbolIndex === start.indexInLine) ||
         symbolIndex === 0
-      ) {
+
+      if (selectionStartWithCurrentSymbol) {
         symbolClassName += ' rounded-l-md'
       }
 
-      if (
+      const selectionEndsWithCurrentSymbol =
         (lineIndex === finish.lineIndex &&
           symbolIndex === finish.indexInLine) ||
         symbolIndex === editorStore.lines[lineIndex].length - 1
-      ) {
+
+      if (selectionEndsWithCurrentSymbol) {
         symbolClassName += ' rounded-r-md'
       }
     }
@@ -55,7 +68,7 @@ const Symbol = (props: SymbolProps) => {
       style={{ color: props.symbol.color ?? 'black' }}
       className={symbolBorder(props.lineIdx, props.symbolIdx)}
     >
-      {props.symbol.value === ' ' ? <>&nbsp;</> : props.symbol.value}
+      {getValueComponent(props.symbol.value)}
     </span>
   )
 }
