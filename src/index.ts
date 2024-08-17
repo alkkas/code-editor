@@ -1,3 +1,3 @@
-import Editor from './app/ui/Editor'
+import Editor from './ui/Editor'
 
 export default Editor

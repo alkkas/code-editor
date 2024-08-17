@@ -1,13 +1,13 @@
-import { EventMap } from '@/shared/utils/types/types'
+import { EventMap } from '@/utils/types/types'
 import {
   getCoords,
   lineElement,
   symbolElement,
-} from '../../lib/getElements.helpers'
+} from '@/utils/lib/getElements.helpers'
 import { EventBase } from './Event.base'
 import { useEditorStore } from '@/store/editorStore'
 import { IPosition } from '@/store/editorStore.types'
-import { DEFAULT_FONT_SIZE } from '@/app/ui/Editor'
+import { DEFAULT_FONT_SIZE } from '@/ui/Editor'
 
 export class SelectionEvents implements EventBase {
   events: EventMap = {

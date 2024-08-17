@@ -1,7 +1,7 @@
-import { LanguageName } from '@/app/model/languages/map'
+import { LanguageName } from '@/model/languages/map'
 import { IPosition, IRange, ISymbol } from './editorStore.types'
-import { ILexTheme } from '@/app/model/lex/lexTheme.model'
-import { defaultEditorTextTheme } from '@/app/model/editor-types'
+import { ILexTheme } from '@/model/lex/lexTheme.model'
+import { defaultEditorTextTheme } from '@/model/editor-types'
 
 export default function getEditorStoreInitialState() {
   return {

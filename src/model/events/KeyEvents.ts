@@ -1,5 +1,5 @@
 import { useEditorStore } from '@/store/editorStore'
-import { EventMap } from '@/shared/utils/types/types'
+import { EventMap } from '@/utils/types/types'
 import { SelectionEvents } from './Selection.events'
 
 const editorStore = useEditorStore.getState()
@@ -81,9 +81,7 @@ export class KeyEvents {
   }
 
   createAllListeners() {
-    const eventsKeys = Object.keys(this.events) as Array<
-      keyof HTMLElementEventMap
-    >
+    const eventsKeys = Object.keys(this.events) as (keyof HTMLElementEventMap)[]
 
     eventsKeys.forEach((eventKey) => {
       const listener = this.events[eventKey] as (evt: Event) => void
@@ -94,9 +92,7 @@ export class KeyEvents {
   }
 
   deleteAllListeners() {
-    const eventsKeys = Object.keys(this.events) as Array<
-      keyof HTMLElementEventMap
-    >
+    const eventsKeys = Object.keys(this.events) as (keyof HTMLElementEventMap)[]
 
     eventsKeys.forEach((eventKey) => {
       const listener = this.events[eventKey] as (evt: Event) => void

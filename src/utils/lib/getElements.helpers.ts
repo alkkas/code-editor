@@ -1,5 +1,5 @@
 import { useEditorStore } from '@/store/editorStore'
-import { lineAttr, symbolAttr } from '@/shared/utils/lib/elements.const'
+import { lineAttr, symbolAttr } from '@/utils/lib/elements.const'
 import { IPosition } from '@/store/editorStore.types'
 
 export const lineElement = (index?: number) => {

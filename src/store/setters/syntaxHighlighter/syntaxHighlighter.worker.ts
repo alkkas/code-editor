@@ -1,7 +1,7 @@
-import { defaultEditorTextTheme } from '@/app/model/editor-types'
-import { languagesMap } from '@/app/model/languages/map'
-import { Itoken } from '@/app/model/lex/lex.model'
-import { ILexTheme } from '@/app/model/lex/lexTheme.model'
+import { defaultEditorTextTheme } from '@/model/editor-types'
+import { languagesMap } from '@/model/languages/map'
+import { Itoken } from '@/model/lex/lex.model'
+import { ILexTheme } from '@/model/lex/lexTheme.model'
 import { IEditorStoreData } from '@/store/editorStore.initial'
 
 interface IOneLineRange {

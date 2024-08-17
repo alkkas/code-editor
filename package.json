@@ -8,7 +8,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon -e js,ts,tsx,jsx,css --watch src --exec \"npm run build\"",
+    "dev": "rollup -c -w",
     "build": "rollup -c"
   },
   "repository": {

@@ -1,4 +1,4 @@
-import { WritableDraft } from '@/shared/utils/types/types'
+import { WritableDraft } from '@/utils/types/types'
 import { IEditorStore } from '../editorStore.types'
 
 //immer "produce" inside immer "produce" not working as expected

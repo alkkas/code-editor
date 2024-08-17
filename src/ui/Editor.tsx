@@ -1,10 +1,10 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 import { KeyEvents } from '../model/events/KeyEvents'
 import { EditorProps } from '../model/editor-types'
-import { Carriage } from '@/shared/ui/Carriage/Carriage'
+import { Carriage } from './Carriage/Carriage'
 import { useEditorStore } from '@/store/editorStore'
 import Line from './Line'
-import { lineElement, symbolElement } from '../lib/getElements.helpers'
+import { lineElement, symbolElement } from '@/utils/lib/getElements.helpers'
 import '../index.css'
 
 export const DEFAULT_FONT_SIZE = 16
