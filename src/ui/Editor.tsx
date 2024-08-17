@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef, useState } from 'react'
-import { KeyEvents } from '../model/events/KeyEvents'
+import { Events } from '../model/events/events'
 import { EditorProps } from '../model/editor-types'
 import { Carriage } from './Carriage/Carriage'
 import { useEditorStore } from '@/store/editorStore'
@@ -66,11 +66,11 @@ export default function Editor(props: EditorProps) {
   useLayoutEffect(() => {
     if (!wrapper.current) throw new Error('wrapper component is null')
 
-    const keyEvents = new KeyEvents(wrapper.current)
+    const events = new Events(wrapper.current)
 
-    keyEvents.createAllListeners()
+    events.createAllListeners()
 
-    return keyEvents.deleteAllListeners.bind(keyEvents)
+    return events.deleteAllListeners.bind(events)
   }, [])
 
   return (
