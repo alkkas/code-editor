@@ -14,35 +14,36 @@ export const getDefaultEvents: GetEventsFunc = () => {
     },
     async keydown(evt: KeyboardEvent) {
       evt.preventDefault()
-      if (evt.key.length === 1) {
-        if (evt.ctrlKey) {
-          if (evt.code === 'KeyC') {
-            editorStore.copyToClipboard(editorStore.getSelectionRange())
-          } else if (evt.code === 'KeyX') {
-            editorStore.cut()
-          } else if (evt.code === 'KeyV') {
-            const text = await navigator.clipboard.readText()
-            editorStore.pasteText(text)
-          }
-          return
-        }
-        editorStore.addNewSymbol({ value: evt.key })
-      } else if (evt.key === 'Tab') {
-        editorStore.addNewSymbol({ value: ' ' }, { value: ' ' })
-      } else if (evt.key === 'Backspace') {
-        editorStore.deleteSymbol()
-      } else if (evt.key === 'ArrowLeft') {
-        editorStore.moveCarriage('left')
-      } else if (evt.key === 'ArrowRight') {
-        editorStore.moveCarriage('right')
-      } else if (evt.key === 'ArrowUp') {
-        editorStore.moveCarriage('up')
-      } else if (evt.key === 'ArrowDown') {
-        editorStore.moveCarriage('down')
-      } else if (evt.key === 'Enter') {
-        editorStore.createNewLine()
+
+      const keyToEventMap: Record<string, () => void> = {
+        Tab: () => editorStore.addNewSymbol({ value: ' ' }, { value: ' ' }),
+        Backspace: () => editorStore.deleteSymbol(),
+        ArrowLeft: () => editorStore.moveCarriage('left'),
+        ArrowRight: () => editorStore.moveCarriage('right'),
+        ArrowUp: () => editorStore.moveCarriage('up'),
+        ArrowDown: () => editorStore.moveCarriage('down'),
+        Enter: () => editorStore.createNewLine(),
       }
+
+      keyToEventMap[evt.key]?.()
+
+      if (evt.key.length !== 1) return
+
+      editorStore.addNewSymbol({ value: evt.key })
+
+      if (!evt.ctrlKey) return
+
+      const ctrlKeyToEventMap: Record<string, () => Promise<void> | void> = {
+        KeyC: () =>
+          editorStore.copyToClipboard(editorStore.getSelectionRange()),
+        KeyX: () => editorStore.cut(),
+        KeyV: async () =>
+          editorStore.pasteText(await navigator.clipboard.readText()),
+      }
+
+      await ctrlKeyToEventMap[evt.code]?.()
     },
+
     paste(e: ClipboardEvent) {
       if (!useEditorStore.getState().isFocused) return
 
