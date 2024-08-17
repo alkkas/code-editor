@@ -1,30 +1,31 @@
 import { EventMap } from '@/utils/types/types'
 import { getDefaultEvents } from './allEvents/default'
 import { getSelectionEvents } from './allEvents/selection'
+import { GetEventsFunc } from './allEvents/events.model'
 
 export class Events {
   wrapper: HTMLDivElement
 
-  private readonly events: EventMap
+  private events!: EventMap
 
   private hiddenEventsNames: (keyof HTMLElementEventMap)[] = []
+
+  private initEvents(...getEvents: GetEventsFunc[]) {
+    const hiddenEventsNames: (keyof HTMLElementEventMap)[] = []
+
+    getEvents.forEach((getEvent) => {
+      const newEvents = getEvent(this.wrapper)
+      this.events = { ...this.events, ...newEvents.events }
+      hiddenEventsNames.push(...(newEvents.hiddenEventsNames ?? []))
+    })
+
+    this.hiddenEventsNames = hiddenEventsNames
+  }
 
   constructor(wrapper: HTMLDivElement) {
     this.wrapper = wrapper
 
-    // if number of events grows refactor this
-    const defaultEvents = getDefaultEvents(wrapper)
-    const selectionEvents = getSelectionEvents(wrapper)
-
-    this.hiddenEventsNames.push(
-      ...(defaultEvents.hiddenEventsNames ?? []),
-      ...(selectionEvents.hiddenEventsNames ?? [])
-    )
-
-    this.events = {
-      ...defaultEvents.events,
-      ...selectionEvents.events,
-    }
+    this.initEvents(getDefaultEvents, getSelectionEvents)
   }
 
   createAllListeners() {
