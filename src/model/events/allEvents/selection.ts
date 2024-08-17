@@ -6,7 +6,6 @@ import {
 } from '@/utils/lib/getElements.helpers'
 import { useEditorStore } from '@/store/editorStore'
 import { IPosition } from '@/store/editorStore.types'
-import { DEFAULT_FONT_SIZE } from '@/ui/Editor'
 import { GetEventsFunc } from './events.model'
 
 export const getSelectionEvents: GetEventsFunc = (element) => {
@@ -73,7 +72,7 @@ export const getSelectionEvents: GetEventsFunc = (element) => {
 
         const isCursorBetweenLine =
           (mouseCoords.y > lineY &&
-            mouseCoords.y < lineY + DEFAULT_FONT_SIZE) ||
+            mouseCoords.y < lineY + lineDom.offsetHeight) ||
           lineY > mouseCoords.y
 
         if (!isCursorBetweenLine && lineIndex !== editorStore.lines.length - 1)

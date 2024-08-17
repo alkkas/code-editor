@@ -6,12 +6,10 @@ import { useEditorStore } from '@/store/editorStore'
 import Line from './Line'
 import { lineElement, symbolElement } from '@/utils/lib/getElements.helpers'
 import '../index.css'
-
-export const DEFAULT_FONT_SIZE = 16
+import { EditorClassNamesContext } from './classNames.context'
 
 export default function Editor(props: EditorProps) {
   const wrapper = useRef<HTMLDivElement>(null)
-  const fontSize = props.fontSize ?? DEFAULT_FONT_SIZE
   const editorStore = useEditorStore()
 
   const [carriageCoords, setCarriageCoords] = useState({ x: 0, y: 0 })
@@ -26,7 +24,7 @@ export default function Editor(props: EditorProps) {
     if (!line) throw Error('Line not found')
 
     initialCoords.y =
-      (line.offsetTop ?? 0) + (line.clientHeight / 2 - fontSize / 2)
+      (line.offsetTop ?? 0) + (line.clientHeight / 2 - line.offsetHeight / 2)
     initialCoords.x = line.offsetLeft
 
     const symbols = document.querySelectorAll(
@@ -52,11 +50,11 @@ export default function Editor(props: EditorProps) {
   }
 
   useLayoutEffect(() => {
-    editorStore.highlighter.language = props.theme.language
+    editorStore.highlighter.language = props.language
 
     if (props.theme.editorText)
       editorStore.highlighter.editorText = props.theme.editorText
-  }, [props.theme.language, props.theme.editorText])
+  }, [props.language, props.theme.editorText])
 
   useLayoutEffect(() => {
     updateCarriageCoords()
@@ -76,23 +74,22 @@ export default function Editor(props: EditorProps) {
   return (
     <div
       {...props}
-      style={{ ...props.style, width: props.width, height: props.height }}
+      style={{ ...props.style }}
       ref={wrapper}
-      className="bg-secondary border-primary border cursor-text select-none relative overflow-auto"
+      className={`bg-secondary border-primary border cursor-text
+         select-none relative overflow-auto ${props.wrapperClassName ?? ''}`}
       tabIndex={0}
     >
-      {editorStore.isFocused && (
-        <Carriage
-          fontSize={fontSize}
-          left={carriageCoords.x}
-          top={carriageCoords.y}
-        />
-      )}
-      <div className="relative">
-        {editorStore.lines.map((line, line_idx) => (
-          <Line line={line} index={line_idx} key={line_idx} />
-        ))}
-      </div>
+      <EditorClassNamesContext.Provider value={props}>
+        {editorStore.isFocused && (
+          <Carriage left={carriageCoords.x} top={carriageCoords.y} />
+        )}
+        <div className="relative">
+          {editorStore.lines.map((line, line_idx) => (
+            <Line line={line} index={line_idx} key={line_idx} />
+          ))}
+        </div>
+      </EditorClassNamesContext.Provider>
     </div>
   )
 }

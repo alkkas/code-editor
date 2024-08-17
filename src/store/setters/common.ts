@@ -4,7 +4,7 @@ import { IEditorStore } from '../editorStore.types'
 //immer "produce" inside immer "produce" not working as expected
 type ICommonSetters<T> = {
   [K in keyof T]: T[K] extends (...args: infer R) => unknown
-    ? (...funcArg: [...R, state: any]) => void
+    ? (...funcArg: [...R, state: WritableDraft<IEditorStore>]) => void
     : never
 }
 
@@ -27,8 +27,8 @@ export function mapCommonSetters(
   set: SetType
 ) {
   return Object.entries(additionalSetters).reduce((acc, [key, value]) => {
-    //@ts-ignore
-    acc[key] = (...args) => set((state) => value(...args, state))
+    const k = key as keyof EditorStoreCommonSetters
+    acc[k] = (...args) => set((state) => value(...args, state))
     return acc
   }, {} as CommonSettersObj)
 }

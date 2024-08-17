@@ -7,8 +7,7 @@ export type DeepPartial<T> =
       }
     : T
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type TransformEventMap<T> = { [K in keyof T]: (evt: T[K]) => any }
+export type TransformEventMap<T> = { [K in keyof T]: (evt: T[K]) => void }
 
 export type EventMap = Partial<TransformEventMap<HTMLElementEventMap>>
 

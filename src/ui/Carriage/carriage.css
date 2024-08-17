@@ -1,0 +1,7 @@
+.carriage {
+  --carriage-width: 0px;
+  --carriage-height: 0px;
+
+  width: var(--carriage-width);
+  height: var(--carriage-height);
+}

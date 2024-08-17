@@ -1,9 +1,10 @@
 import LineNumber from './LineNumber/LineNumber'
 import { ISymbol } from '@/store/editorStore.types'
-import { memo } from 'react'
+import { memo, useContext } from 'react'
 import { useEditorStore } from '@/store/editorStore'
 import { lineAttr } from '@/utils/lib/elements.const'
 import Symbol from './Symbol'
+import { EditorClassNamesContext } from './classNames.context'
 
 interface LineProps {
   line: ISymbol[]
@@ -37,8 +38,13 @@ const areLinesEqual = (linePrev: LineProps, lineCurr: LineProps) => {
 }
 
 const Line = (props: LineProps) => {
+  const classNamesContext = useContext(EditorClassNamesContext)
+
   return (
-    <div key={props.index} className="flex items-stretch">
+    <div
+      key={props.index}
+      className={`flex items-stretch ${classNamesContext.lineClassName ?? ''}`}
+    >
       <LineNumber count={props.index + 1} />
       <div
         {...{ [lineAttr]: props.index }}

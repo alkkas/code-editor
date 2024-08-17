@@ -17,13 +17,18 @@ interface ITheme {
     secondary: string
   }
   editorText?: ILexTheme
-  language: LanguageName
 }
 
-export interface EditorProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface EditorClassNames {
   wrapperClassName?: string
-  fontSize?: number
+  carriageClassName?: string
+  lineNumberClassName?: string
+  lineClassName?: string
+}
+
+export interface EditorProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+    EditorClassNames {
+  language: LanguageName
   theme: ITheme
-  width: number
-  height: number
 }
