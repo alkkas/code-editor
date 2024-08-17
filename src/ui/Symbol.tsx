@@ -1,6 +1,7 @@
 import { lineAttr, symbolAttr } from '@/utils/lib/elements.const'
 import { useEditorStore } from '@/store/editorStore'
 import { ISymbol } from '@/store/editorStore.types'
+import { memo } from 'react'
 
 interface SymbolProps {
   symbolIdx: number
@@ -19,9 +20,9 @@ const getValueComponent = (value: string): JSX.Element => {
 }
 
 const Symbol = (props: SymbolProps) => {
-  const editorStore = useEditorStore()
-
   const symbolBorder = (lineIndex: number, symbolIndex: number) => {
+    const editorStore = useEditorStore.getState()
+
     let symbolClassName = ''
     if (!editorStore.isSelectionActive()) return ''
 

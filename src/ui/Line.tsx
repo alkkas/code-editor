@@ -11,20 +11,15 @@ interface LineProps {
   index: number
 }
 
-const areLineInRange = (lineProps: LineProps) => {
+const isCursorInCurrLine = (lineProps: LineProps) => {
   const editorStore = useEditorStore.getState()
-  try {
-    const range = editorStore.getSelectionRange()
 
-    if (
-      lineProps.index >= range.start.lineIndex &&
-      lineProps.index <= range.finish.lineIndex
-    ) {
-      return true
-    }
-  } catch (e) {
-    return false
+  const range = editorStore.selectionRange
+
+  if (lineProps.index === range.finish?.lineIndex) {
+    return true
   }
+  return false
 }
 
 const areLinesEqual = (linePrev: LineProps, lineCurr: LineProps) => {
@@ -32,7 +27,7 @@ const areLinesEqual = (linePrev: LineProps, lineCurr: LineProps) => {
 
   if (linePrev.line.length !== lineCurr.line.length) return false
 
-  if (areLineInRange(linePrev) !== areLineInRange(lineCurr)) return false
+  if (isCursorInCurrLine(lineCurr)) return false
 
   return true
 }
@@ -43,7 +38,7 @@ const Line = (props: LineProps) => {
   return (
     <div
       key={props.index}
-      className={`flex items-stretch ${classNamesContext.lineClassName ?? ''}`}
+      className={`flex text-lg items-stretch ${classNamesContext.lineClassName ?? ''}`}
     >
       <LineNumber count={props.index + 1} />
       <div
@@ -63,4 +58,4 @@ const Line = (props: LineProps) => {
   )
 }
 
-export default Line
+export default memo(Line, areLinesEqual)

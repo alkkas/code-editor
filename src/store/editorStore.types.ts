@@ -5,8 +5,6 @@ import { IEditorStoreSetters } from './setters/index-editor.setters'
 export interface ISymbol {
   value: string
   color?: string
-  x?: number
-  y?: number
 }
 
 export interface IPosition {
