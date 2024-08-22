@@ -4,8 +4,8 @@ import { EditorProps } from '../model/editor-types'
 import { Carriage } from './Carriage/Carriage'
 import { useEditorStore } from '@/store/editorStore'
 import Line from './Line'
-import '../index.css'
 import { EditorClassNamesContext } from './classNames.context'
+import '../index.css'
 
 export default function Editor(props: EditorProps) {
   const wrapper = useRef<HTMLDivElement>(null)

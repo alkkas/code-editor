@@ -8,8 +8,8 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "rollup -c -w",
-    "build": "rollup -c"
+    "dev": "rollup -c -w --environment BUILD:dev",
+    "build": "rollup -c --failAfterWarnings --environment BUILD:prod"
   },
   "repository": {
     "type": "git",
@@ -21,7 +21,12 @@
     "url": "https://github.com/alkkas/code-editor/issues"
   },
   "homepage": "https://github.com/alkkas/code-editor#readme",
+  "peerDependencies": {
+    "react": "^18.2.0"
+  },
   "devDependencies": {
+    "@babel/preset-react": "^7.24.7",
+    "@babel/preset-typescript": "^7.24.7",
     "@rollup/plugin-alias": "^5.1.0",
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-commonjs": "^25.0.7",
@@ -38,12 +43,9 @@
     "eslint-plugin-fsd-import": "^0.0.12",
     "eslint-plugin-react": "^7.34.0",
     "immer": "^10.0.4",
-    "nodemon": "^3.1.0",
     "postcss-import": "^16.0.1",
     "prettier": "^3.2.5",
     "prettier-plugin-tailwindcss": "^0.5.11",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
     "rollup": "^4.12.0",
     "rollup-plugin-peer-deps-external": "^2.2.4",
     "rollup-plugin-postcss": "^4.0.2",
