@@ -30,5 +30,5 @@ export interface EditorProps
   extends React.HTMLAttributes<HTMLDivElement>,
     EditorClassNames {
   language: LanguageName
-  theme: ITheme
+  theme?: ITheme
 }

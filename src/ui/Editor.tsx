@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef } from 'react'
-import { Events } from '../model/events/events'
-import { EditorProps } from '../model/editor-types'
+import { Events } from '@/model/events/events'
+import { EditorProps } from '@/model/editor-types'
 import { Carriage } from './Carriage/Carriage'
 import { useEditorStore } from '@/store/editorStore'
 import Line from './Line'
@@ -14,9 +14,9 @@ export default function Editor(props: EditorProps) {
   useLayoutEffect(() => {
     editorStore.highlighter.language = props.language
 
-    if (props.theme.editorText)
+    if (props.theme?.editorText)
       editorStore.highlighter.editorText = props.theme.editorText
-  }, [props.language, props.theme.editorText])
+  }, [props.language, props.theme?.editorText])
 
   useLayoutEffect(() => {
     editorStore.highlightSyntax()
