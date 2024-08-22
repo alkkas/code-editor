@@ -8,7 +8,7 @@ import commonjs from '@rollup/plugin-commonjs'
 import workerLoader from 'rollup-plugin-web-worker-loader'
 import { defineConfig } from 'rollup'
 
-const extensions = ['.ts', '.tsx']
+const extensions = ['.ts', '.tsx', '.js', '.jsx']
 
 export default defineConfig({
   input: './src/index.ts',
@@ -30,9 +30,6 @@ export default defineConfig({
     resolve({ extensions }),
     commonjs(),
     workerLoader(),
-    alias({
-      entries: [{ find: '@/', replacement: './src' }],
-    }),
     postcss({
       config: {
         path: './postcss.config.cjs',
@@ -47,7 +44,10 @@ export default defineConfig({
       ? [
           babel({
             exclude: 'node_modules/**',
-            presets: ['@babel/preset-react', '@babel/preset-typescript'],
+            presets: [
+              ['@babel/preset-react', { runtime: 'automatic' }],
+              '@babel/preset-typescript',
+            ],
             plugins: [
               [
                 'module-resolver',
@@ -64,6 +64,11 @@ export default defineConfig({
           }),
           terser(),
         ]
-      : [typescript()]),
+      : [
+          alias({
+            entries: [{ find: '@/', replacement: './src' }],
+          }),
+          typescript(),
+        ]),
   ],
 })
