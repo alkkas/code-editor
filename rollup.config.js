@@ -8,6 +8,8 @@ import commonjs from '@rollup/plugin-commonjs'
 import workerLoader from 'rollup-plugin-web-worker-loader'
 import { defineConfig } from 'rollup'
 
+const extensions = ['.ts', '.tsx']
+
 export default defineConfig({
   input: './src/index.ts',
   output: [
@@ -25,7 +27,7 @@ export default defineConfig({
   ],
   external: ['react'],
   plugins: [
-    resolve(),
+    resolve({ extensions }),
     commonjs(),
     workerLoader(),
     alias({
@@ -45,19 +47,23 @@ export default defineConfig({
       ? [
           babel({
             exclude: 'node_modules/**',
-            presets: [
-              '@babel/preset-react',
+            presets: ['@babel/preset-react', '@babel/preset-typescript'],
+            plugins: [
               [
-                '@babel/preset-typescript',
-                { isTSX: true, allExtensions: true },
+                'module-resolver',
+                {
+                  root: ['./src'],
+                  alias: {
+                    '@': ([, name]) => `./src${name}`,
+                  },
+                },
               ],
             ],
-            extensions: ['.ts', '.tsx'],
+            extensions,
             babelHelpers: 'bundled',
           }),
           terser(),
         ]
-      : []),
-    // typescript(),
+      : [typescript()]),
   ],
 })
