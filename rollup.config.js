@@ -45,6 +45,14 @@ export default defineConfig({
           babel({
             exclude: 'node_modules/**',
             presets: [
+              [
+                '@babel/preset-env',
+                {
+                  targets: { chrome: '58', ie: '11' },
+                  useBuiltIns: 'usage',
+                  corejs: '3.38.1',
+                },
+              ],
               ['@babel/preset-react', { runtime: 'automatic' }],
               '@babel/preset-typescript',
             ],
