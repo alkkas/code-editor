@@ -1,4 +1,4 @@
-import LineNumber from './LineNumber/LineNumber'
+import LineNumber from './LineNumber'
 import { ISymbol } from '@/store/editorStore.types'
 import { memo, useContext } from 'react'
 import { useEditorStore } from '@/store/editorStore'
