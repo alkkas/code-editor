@@ -1,20 +1,21 @@
-import { useLayoutEffect, useRef } from 'react'
+import { useEffect, useLayoutEffect, useRef } from 'react'
 import { Events } from '@/model/events/events'
 import { EditorProps } from '@/model/editor-types'
-import { Carriage } from './Carriage/Carriage'
+import { Carriage } from '../Carriage/Carriage'
 import { useEditorStore } from '@/store/editorStore'
-import Line from './Line'
-import { EditorClassNamesContext } from './classNames.context'
+import Line from '../Line'
+import { EditorClassNamesContext } from '../classNames.context'
+import '../../index.css'
 
 export default function Editor(props: EditorProps) {
   const wrapper = useRef<HTMLDivElement>(null)
   const editorStore = useEditorStore()
 
   useLayoutEffect(() => {
-    editorStore.highlighter.language = props.language
+    editorStore.setLanguage(props.language)
 
     if (props.theme?.editorText)
-      editorStore.highlighter.editorText = props.theme.editorText
+      editorStore.setTextTheme(props.theme.editorText)
   }, [props.language, props.theme?.editorText])
 
   useLayoutEffect(() => {
@@ -34,6 +35,7 @@ export default function Editor(props: EditorProps) {
   return (
     <div
       {...props}
+      data-testid="editor"
       style={{ ...props.style }}
       ref={wrapper}
       className={`bg-secondary border-primary border cursor-text

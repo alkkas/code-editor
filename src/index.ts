@@ -1,4 +1,3 @@
-import Editor from './ui/Editor'
-import './index.css'
+import Editor from './ui/Editor/Editor'
 
 export default Editor

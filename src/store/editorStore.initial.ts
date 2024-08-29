@@ -6,21 +6,14 @@ import { defaultEditorTextTheme } from '@/model/editor-types'
 export default function getEditorStoreInitialState() {
   return {
     highlighter: {
-      language: 'typescript',
-      editorText: defaultEditorTextTheme,
-    } as {
-      editorText: ILexTheme
-      language: LanguageName
+      language: 'typescript' as LanguageName,
+      editorText: defaultEditorTextTheme as ILexTheme,
     },
     buffer: [[]] as ISymbol[][],
     currentCarriagePos: { lineIndex: 0, indexInLine: 0 } as IPosition,
     isFocused: false,
     lines: [[]] as ISymbol[][],
     selectionRange: { start: undefined, finish: undefined } as IRange,
-    language: {
-      name: null as LanguageName | null,
-      theme: defaultEditorTextTheme as ILexTheme,
-    },
   }
 }
 
