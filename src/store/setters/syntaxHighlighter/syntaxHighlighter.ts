@@ -1,6 +1,6 @@
 import { IEditorStore, ISymbol } from '../../editorStore.types'
 import { SetType } from '../common'
-import SyntaxHighlightWorker from 'web-worker:./syntaxHighlighter.worker.ts'
+import SyntaxHighlighterWorker from './syntaxHighlighter.worker?worker&inline'
 
 export interface ISyntaxHighlighter {
   highlightSyntax: () => void
@@ -12,7 +12,7 @@ export default function getSyntaxHighlighter(
 ): ISyntaxHighlighter {
   if (!window.Worker) throw new Error('you browser does not support workers')
 
-  const worker = new SyntaxHighlightWorker()
+  const worker = new SyntaxHighlighterWorker()
 
   worker.onmessage = (e: MessageEvent<ISymbol[][]>) => {
     set((state) => {
