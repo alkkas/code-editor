@@ -1,9 +1,24 @@
-import { IEditorStore, ISymbol } from '../../editorStore.types'
+import { languagesMap } from '@/model/languages/map'
+import { IEditorStore } from '../../editorStore.types'
 import { SetType } from '../common'
 import SyntaxHighlighterWorker from './syntaxHighlighter.worker?worker&inline'
+import { IEditorStoreData, getStoreData } from '@/store/editorStore.initial'
+import { ILexTheme } from '@/model/lex/lexTheme.model'
+import { LexModel } from '@/model/lex/lex.model'
 
 export interface ISyntaxHighlighter {
   highlightSyntax: () => void
+}
+export interface IOneLineRange {
+  lineIndex: number
+  start: number
+  finish: number
+}
+
+export type IColorRanges = { range: IOneLineRange; color: string }[]
+
+export interface ISyntaxHighlighterDto extends IEditorStoreData {
+  langConf: LexModel<ILexTheme>
 }
 
 export default function getSyntaxHighlighter(
@@ -14,16 +29,24 @@ export default function getSyntaxHighlighter(
 
   const worker = new SyntaxHighlighterWorker()
 
-  worker.onmessage = (e: MessageEvent<ISymbol[][]>) => {
+  worker.onmessage = (e: MessageEvent<IColorRanges>) => {
     set((state) => {
-      state.lines = e.data
+      e.data.forEach(({ range, color }) => {
+        state.lines[range.lineIndex]?.forEach((symbol, index) => {
+          if (index >= range.start && index <= range.finish) {
+            symbol.color = color
+          }
+        })
+      })
     })
   }
 
   return {
     highlightSyntax: () => {
-      const workerMsg = JSON.parse(JSON.stringify(get()))
-      worker.postMessage(workerMsg)
+      worker.postMessage({
+        ...getStoreData(),
+        langConf: languagesMap[get().highlighter.language],
+      })
     },
   }
 }

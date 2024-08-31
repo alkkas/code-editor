@@ -2,6 +2,7 @@ import { LanguageName } from '@/model/languages/map'
 import { IPosition, IRange, ISymbol } from './editorStore.types'
 import { ILexTheme } from '@/model/lex/lexTheme.model'
 import { defaultEditorTextTheme } from '@/model/editor-types'
+import { useEditorStore } from './editorStore'
 
 export default function getEditorStoreInitialState() {
   return {
@@ -18,3 +19,14 @@ export default function getEditorStoreInitialState() {
 }
 
 export type IEditorStoreData = ReturnType<typeof getEditorStoreInitialState>
+
+export const getStoreData = () => {
+  const editorStore = useEditorStore.getState()
+
+  return Object.keys(getEditorStoreInitialState()).reduce((data, key) => {
+    const k = key as keyof IEditorStoreData
+    //@ts-ignore
+    data[k] = editorStore[k]
+    return data
+  }, {} as IEditorStoreData)
+}

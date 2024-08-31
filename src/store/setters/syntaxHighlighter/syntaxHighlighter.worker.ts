@@ -1,38 +1,33 @@
-import { defaultEditorTextTheme } from '@/model/editor-types'
-import { languagesMap } from '@/model/languages/map'
 import { Itoken } from '@/model/lex/lex.model'
 import { ILexTheme } from '@/model/lex/lexTheme.model'
-import { IEditorStoreData } from '@/store/editorStore.initial'
-
-interface IOneLineRange {
-  lineIndex: number
-  start: number
-  finish: number
-}
-
-const paintSymbols = (
-  range: IOneLineRange,
-  color: string,
-  state: IEditorStoreData
-) => {
-  state.lines[range.lineIndex].forEach((symbol, index) => {
-    if (index >= range.start && index <= range.finish) {
-      symbol.color = color
-    }
-  })
-}
+import {
+  IColorRanges,
+  IOneLineRange,
+  ISyntaxHighlighterDto,
+} from './syntaxHighlighter'
 
 const isTokenArray = (token: keyof ILexTheme) => {
   return token[0] === '$'
 }
 
-self.onmessage = (e: MessageEvent<IEditorStoreData>) => {
-  const store = e.data
-  const language = e.data.highlighter.language
-  let theme = e.data.highlighter.editorText
+class ColorRange {
+  #ranges: IColorRanges = []
 
-  if (!theme) theme = defaultEditorTextTheme
-  const langConf = languagesMap[language]
+  addRange(range: IOneLineRange, color: string) {
+    this.#ranges.push(structuredClone({ range, color }))
+  }
+
+  getRanges(): IColorRanges {
+    return this.#ranges
+  }
+}
+
+self.onmessage = (e: MessageEvent<ISyntaxHighlighterDto>) => {
+  const store = e.data
+  const theme = e.data.highlighter.editorText
+  const langConf = e.data.langConf
+
+  const colorRanges = new ColorRange()
 
   let currentTokens: Itoken<typeof theme> | null = null
 
@@ -82,7 +77,7 @@ self.onmessage = (e: MessageEvent<IEditorStoreData>) => {
           }
 
           color = theme[tkn]
-          paintSymbols(range, color, store)
+          colorRanges.addRange(range, color)
 
           currentTokens = null
 
@@ -95,7 +90,7 @@ self.onmessage = (e: MessageEvent<IEditorStoreData>) => {
         }
 
         if (color) {
-          paintSymbols(range, color, store)
+          colorRanges.addRange(range, color)
           currentTokens = null
         }
       }
@@ -112,5 +107,5 @@ self.onmessage = (e: MessageEvent<IEditorStoreData>) => {
     range.finish = 0
   }
 
-  self.postMessage(store.lines)
+  self.postMessage(colorRanges.getRanges())
 }

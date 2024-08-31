@@ -6,34 +6,31 @@ module.exports = {
     es2021: true,
   },
   extends: [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:react/recommended",
-    "plugin:react/jsx-runtime",
-    "plugin:storybook/recommended"
+    'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:react/recommended',
+    'plugin:react/jsx-runtime',
+    'plugin:storybook/recommended',
   ],
   overrides: [
     {
       env: {
         node: true,
       },
-      files: [".eslintrc.{js,cjs}"],
+      files: ['.eslintrc.{js,cjs}'],
       parserOptions: {
-        sourceType: "script",
+        sourceType: 'script',
       },
     },
   ],
-  parser: "@typescript-eslint/parser",
+  parser: '@typescript-eslint/parser',
   parserOptions: {
-    ecmaVersion: "latest",
-    sourceType: "module",
+    ecmaVersion: 'latest',
+    sourceType: 'module',
   },
-  plugins: ["@typescript-eslint", "react", "fsd-import"],
+  plugins: ['@typescript-eslint', 'react'],
   rules: {
-    "no-console": "warn",
-    "fsd-import/fsd-relative-path": "error",
-    "fsd-import/public-api-imports": "error",
-    "fsd-import/layer-imports": ["error", { alias: "@" }],
-    "@typescript-eslint/no-unused-vars": "warn",
+    'no-console': 'warn',
+    '@typescript-eslint/no-unused-vars': 'warn',
   },
 }
