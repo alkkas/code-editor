@@ -13,6 +13,7 @@ type Story = StoryObj<typeof Editor>
 
 const props: EditorProps = {
   language: 'typescript',
+  initialValue: 'let',
   style: {
     width: 600,
     height: 400,

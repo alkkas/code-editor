@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef } from 'react'
+import { useLayoutEffect, useRef, useEffect } from 'react'
 import { Events } from '@/model/events/events'
 import { EditorProps } from '@/model/editor-types'
 import { Carriage } from '../Carriage/Carriage'
@@ -12,17 +12,6 @@ export default function Editor(props: EditorProps) {
   const editorStore = useEditorStore()
 
   useLayoutEffect(() => {
-    editorStore.setLanguage(props.language)
-
-    if (props.theme?.editorText)
-      editorStore.setTextTheme(props.theme.editorText)
-  }, [props.language, props.theme?.editorText])
-
-  useLayoutEffect(() => {
-    editorStore.highlightSyntax()
-  }, [editorStore.getCurrentLineIndex(), editorStore.getCurrentIndexInLine()])
-
-  useLayoutEffect(() => {
     if (!wrapper.current) throw new Error('wrapper component is null')
 
     const events = new Events(wrapper.current)
@@ -32,9 +21,25 @@ export default function Editor(props: EditorProps) {
     return events.deleteAllListeners.bind(events)
   }, [])
 
+  useLayoutEffect(() => {
+    editorStore.setLanguage(props.language)
+
+    if (props.theme?.editorText)
+      editorStore.setTextTheme(props.theme.editorText)
+  }, [props.language, props.theme?.editorText])
+
+  useEffect(() => {
+    if (!props.initialValue) return
+    editorStore.pasteText(props.initialValue)
+    editorStore.setCarriagePos({ lineIndex: 0, indexInLine: 0 })
+  }, [props.initialValue])
+
+  useLayoutEffect(() => {
+    // editorStore.highlightSyntax()
+  }, [editorStore.getCurrentLineIndex(), editorStore.getCurrentIndexInLine()])
+
   return (
     <div
-      {...props}
       data-testid="editor"
       style={{ ...props.style }}
       ref={wrapper}

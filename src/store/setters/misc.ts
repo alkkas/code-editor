@@ -115,7 +115,6 @@ export const getMiscSetters = (
       get().clearSelectionRange()
     },
 
-
     cut() {
       if (get().isSelectionActive()) {
         get().removeSelectedText()

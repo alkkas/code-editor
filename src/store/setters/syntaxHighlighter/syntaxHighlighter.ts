@@ -8,6 +8,7 @@ import { LexModel } from '@/model/lex/lex.model'
 
 export interface ISyntaxHighlighter {
   highlightSyntax: () => void
+  updateSymbolColors: (e: MessageEvent<IColorRanges>) => void
 }
 export interface IOneLineRange {
   lineIndex: number
@@ -30,15 +31,8 @@ export default function getSyntaxHighlighter(
   const worker = new SyntaxHighlighterWorker()
 
   worker.onmessage = (e: MessageEvent<IColorRanges>) => {
-    set((state) => {
-      e.data.forEach(({ range, color }) => {
-        state.lines[range.lineIndex]?.forEach((symbol, index) => {
-          if (index >= range.start && index <= range.finish) {
-            symbol.color = color
-          }
-        })
-      })
-    })
+    console.log('message')
+    get().updateSymbolColors(e)
   }
 
   return {
@@ -46,6 +40,18 @@ export default function getSyntaxHighlighter(
       worker.postMessage({
         ...getStoreData(),
         langConf: languagesMap[get().highlighter.language],
+      })
+    },
+    updateSymbolColors: (e) => {
+      set((state) => {
+        console.log(state.lines[0].length, 'statetete', e.data)
+        e.data.forEach(({ range, color }) => {
+          state.lines[range.lineIndex]?.forEach((symbol, index) => {
+            if (index >= range.start && index <= range.finish) {
+              symbol.color = color
+            }
+          })
+        })
       })
     },
   }

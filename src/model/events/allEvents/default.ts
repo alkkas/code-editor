@@ -24,7 +24,7 @@ export const getDefaultEvents: GetEventsFunc = () => {
 
   const events: EventMap = {
     focus() {
-      editorStore.setFocus(false)
+      editorStore.setFocus(true)
     },
     focusout() {
       editorStore.setFocus(false)

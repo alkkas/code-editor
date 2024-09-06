@@ -31,4 +31,5 @@ export interface EditorProps
     EditorClassNames {
   language: LanguageName
   theme?: ITheme
+  initialValue?: string
 }
