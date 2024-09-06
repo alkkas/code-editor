@@ -35,7 +35,7 @@ export default function Editor(props: EditorProps) {
   }, [props.initialValue])
 
   useLayoutEffect(() => {
-    // editorStore.highlightSyntax()
+    editorStore.highlightSyntax()
   }, [editorStore.getCurrentLineIndex(), editorStore.getCurrentIndexInLine()])
 
   return (
