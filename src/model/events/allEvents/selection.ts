@@ -112,13 +112,23 @@ export const getSelectionEvents: GetEventsFunc = (element) => {
         break
       }
 
-      editorStore.changeSelectionRange({
-        finish: carriageCoords,
-      })
+      const start = editorStore.selectionRange.start
 
       editorStore.setCarriagePos({
         lineIndex: carriageCoords.lineIndex,
         indexInLine: carriageCoords.indexInLine,
+      })
+
+      if (
+        start.lineIndex < carriageCoords.lineIndex ||
+        (start.lineIndex === carriageCoords.lineIndex &&
+          start.indexInLine < carriageCoords.indexInLine)
+      ) {
+        carriageCoords.indexInLine = Math.max(--carriageCoords.indexInLine, 0)
+      }
+
+      editorStore.changeSelectionRange({
+        finish: carriageCoords,
       })
     },
   }

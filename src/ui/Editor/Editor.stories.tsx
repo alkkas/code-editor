@@ -17,6 +17,7 @@ const props: EditorProps = {
   style: {
     width: 600,
     height: 400,
+    borderRadius: 5,
   },
 }
 

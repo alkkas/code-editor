@@ -44,6 +44,7 @@ export default function Editor(props: EditorProps) {
       style={{ ...props.style }}
       ref={wrapper}
       className={`bg-secondary border-primary border cursor-text
+        flex flex-col 
          select-none relative overflow-auto ${props.wrapperClassName ?? ''}`}
       tabIndex={0}
     >
@@ -54,6 +55,10 @@ export default function Editor(props: EditorProps) {
             <Line line={line} index={line_idx} key={line_idx} />
           ))}
         </div>
+        <div
+          className={`pr-1 w-8 grow bg-amber-400 mr-1 select-none 
+        cursor-default ${props.lineNumberClassName ?? ''}`}
+        />
       </EditorClassNamesContext.Provider>
     </div>
   )
