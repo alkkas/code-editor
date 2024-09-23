@@ -32,7 +32,7 @@ export const getSymbolSetters = (
     deleteSymbol() {
       if (get().isSelectionActive()) {
         get().removeSelectedText()
-        return;
+        return
       }
 
       const { indexInLine, line, index } = get().getCurrent()

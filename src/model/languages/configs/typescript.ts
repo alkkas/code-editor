@@ -1,7 +1,6 @@
 import { LexModel } from '../../lex/lex.model'
-import { ILexTheme } from '../../lex/lexTheme.model'
 
-export const tsConfiguration: LexModel<ILexTheme> = {
+const tsConfiguration: LexModel = {
   $keywords: [
     'abstract',
     'any',
@@ -134,3 +133,5 @@ export const tsConfiguration: LexModel<ILexTheme> = {
     [/\/\/.*$/g, 'comments'],
   ],
 }
+
+export default tsConfiguration

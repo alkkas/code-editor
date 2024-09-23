@@ -43,9 +43,10 @@ export default function getSyntaxHighlighter(
 
   return {
     highlightSyntax: () => {
+      console.log(get().highlighter.language)
       worker.postMessage({
         ...getStoreData(),
-        langConf: languagesMap[get().highlighter.language],
+        langConf: get().highlighter.language,
       })
     },
   }

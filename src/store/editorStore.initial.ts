@@ -1,13 +1,13 @@
-import { LanguageName } from '@/model/languages/map'
 import { IPosition, IRange, ISymbol } from './editorStore.types'
 import { ILexTheme } from '@/model/lex/lexTheme.model'
 import { defaultEditorTextTheme } from '@/model/editor-types'
 import { useEditorStore } from './editorStore'
+import { LexModel } from '@/model/lex/lex.model'
 
 export default function getEditorStoreInitialState() {
   return {
     highlighter: {
-      language: 'typescript' as LanguageName,
+      language: null as LexModel | null,
       editorText: defaultEditorTextTheme as ILexTheme,
     },
     buffer: [[]] as ISymbol[][],
