@@ -18,7 +18,7 @@ export interface IOneLineRange {
 export type IColorRanges = { range: IOneLineRange; color: string }[]
 
 export interface ISyntaxHighlighterDto extends IEditorStoreData {
-  langConf: LexModel<ILexTheme>
+  langConf: LexModel<ILexTheme> | null
 }
 
 export default function getSyntaxHighlighter(

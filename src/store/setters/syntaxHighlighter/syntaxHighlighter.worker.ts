@@ -27,6 +27,8 @@ self.onmessage = (e: MessageEvent<ISyntaxHighlighterDto>) => {
   const theme = e.data.highlighter.editorText
   const langConf = e.data.langConf
 
+  if (!langConf) return
+
   const colorRanges = new ColorRange()
 
   let currentTokens: Itoken<typeof theme> | null = null

@@ -18,6 +18,7 @@ export const setProps = (
       set((state) => {
         state.highlighter.language = languageConf
       })
+      set((state) => state.highlightSyntax())
     },
 
     setTextTheme(textTheme) {
