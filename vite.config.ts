@@ -19,6 +19,16 @@ export default defineConfig({
     },
     rollupOptions: {
       external: ['react'],
+      output: {
+        chunkFileNames(chunkInfo) {
+          if (
+            chunkInfo.facadeModuleId?.includes('src/model/languages/configs')
+          ) {
+            return 'lang/[name]-[hash].[format]'
+          }
+          return '[name]-[hash].[format]'
+        },
+      },
     },
   },
   worker: {

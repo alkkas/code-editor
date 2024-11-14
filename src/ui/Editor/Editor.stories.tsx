@@ -12,8 +12,8 @@ export default meta
 type Story = StoryObj<typeof Editor>
 
 const props: EditorProps = {
-  language: 'typescript',
-  initialValue: "let a = 4;\nlet b = 'asdfasdf';",
+  language: 'python',
+  initialValue: "a = 4;\nb = 'asdfasdf';\nprint(a + b)",
   style: {
     width: 600,
     height: 400,

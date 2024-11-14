@@ -1,4 +1,3 @@
-import { languagesMap } from '@/model/languages/map'
 import { IEditorStore } from '../../editorStore.types'
 import { SetType } from '../common'
 import SyntaxHighlighterWorker from './syntaxHighlighter.worker?worker&inline'
@@ -43,7 +42,6 @@ export default function getSyntaxHighlighter(
 
   return {
     highlightSyntax: () => {
-      console.log(get().highlighter.language)
       worker.postMessage({
         ...getStoreData(),
         langConf: get().highlighter.language,

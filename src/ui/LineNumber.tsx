@@ -1,6 +1,5 @@
 import { useContext } from 'react'
 import { EditorClassNamesContext } from './classNames.context'
-import { useEditorStore } from '@/store/editorStore'
 
 interface LineNumber {
   count: number
